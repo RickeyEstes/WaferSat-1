@@ -558,6 +558,18 @@ static THD_FUNCTION(Thread3, arg) {
   }
 }
 
+/*
+ * Image capture thread
+ */
+/*static THD_WORKING_AREA(waThread4, 4096);
+static THD_FUNCTION(Thread4, arg) {
+
+  (void)arg;
+  chRegSetThreadName("image");
+  while (true) {
+    cmd_image(NULL, 0, NULL);
+  }
+}*/
 
 
 
@@ -621,26 +633,26 @@ static void cmd_image(BaseSequentialStream *chp, int argc, char *argv[]) {
 
   (void)argv;
   if (argc > 0) {
-    //chprintf(chp, "Usage: image\r\n");
+    chprintf(chp, "Usage: image\r\n");
     return;
   }
 
   while(1){
-  //chprintf((BaseSequentialStream *)&SD_console, "Starting JPEG Capture...\r\n");
+  chprintf((BaseSequentialStream *)&SD_console, "Starting JPEG Capture...\r\n");
   palSetPad(GPIOD, GPIOD_LED_RED);
   OV5640_Snapshot2RAM();   // Sample data from DCMI through DMA to RAM
   palClearPad(GPIOD, GPIOD_LED_RED);
 
-  //chprintf((BaseSequentialStream *)&SD_console, "capture done\r\n");
+  chprintf((BaseSequentialStream *)&SD_console, "capture done\r\n");
 
   if (!fs_ready) {
-    //chprintf(chp, "File System not mounted\r\n");
+    chprintf(chp, "File System not mounted\r\n");
     return;
   }
   /* Register work area to the default drive */
-  //chprintf((BaseSequentialStream *)&SD_console, "SDC  > Mounting file system...");
+  chprintf((BaseSequentialStream *)&SD_console, "SDC  > Mounting file system...");
   fr = f_mount(&SDC_FS, "0:", 0);
-  //chprintf((BaseSequentialStream *)&SD_console, "done, return code = %d\r\n", fr);
+  chprintf((BaseSequentialStream *)&SD_console, "done, return code = %d\r\n", fr);
 
   /* Write image data */
   write_jpeg();
@@ -892,9 +904,10 @@ int main(void) {
   while (true) {
 	  // TODO abstract out contents of cmd_image so that it does not depend on a shell's context
 	  // TODO possible infinite loop in cmd_image?
-	  cmd_image(NULL, 0, NULL);
-
+      chEvtDispatch(evhndl, chEvtWaitOneTimeout(ALL_EVENTS, TIME_MS2I(500)));
+      cmd_image(NULL, 0, NULL);
 	  chThdSleepMilliseconds(500);
+
   }
 
 
