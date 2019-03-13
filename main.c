@@ -639,9 +639,9 @@ static void cmd_image(BaseSequentialStream *chp, int argc, char *argv[]) {
 
   while(1){
   chprintf((BaseSequentialStream *)&SD_console, "Starting JPEG Capture...\r\n");
-  palSetPad(GPIOD, GPIOD_LED_RED);
+  //palSetPad(GPIOD, GPIOD_LED_RED);
   OV5640_Snapshot2RAM();   // Sample data from DCMI through DMA to RAM
-  palClearPad(GPIOD, GPIOD_LED_RED);
+  //palClearPad(GPIOD, GPIOD_LED_RED);
 
   chprintf((BaseSequentialStream *)&SD_console, "capture done\r\n");
 
