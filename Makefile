@@ -148,7 +148,8 @@ CSRC = $(STARTUPSRC) \
        sd.c \
        mpu9250.c \
        memcpy_dma.c \
-       gps.c
+       gps.c \
+	   si.c
 # Include paths that ChibiStudio does in the background
 CHIBISTUDIO = ./tools/gnu_arm_tools/7.2-2017q4/arm-none-eabi/include/ ./tools/gnu_arm_tools/7.2-2017q4/arm-none-eabi/include/sys
 #       usbcfg.c \
