@@ -26,9 +26,6 @@ si_err_t si_spi(const uint8_t* tx_buf, size_t tx_len, uint8_t* rx_buf, size_t rx
 	}
 	if(cts != 0xFF) {
 		spiReleaseBus(&SI_SPID);
-		log(ERR, "Timed out while sending command: ");
-		for(unsigned int q = 0; q < tx_len; q++) log(ERR, "%02X ", tx_buf[q]);
-		log(ERR, "\n\r");
         return SI_ERR_TIMEOUT;
     } 
 
@@ -50,9 +47,6 @@ si_err_t si_spi(const uint8_t* tx_buf, size_t tx_len, uint8_t* rx_buf, size_t rx
 	}
 	if(cts != 0xFF) {
 		spiReleaseBus(&SI_SPID);
-		log(ERR, "Timed out while waiting for reply after: ");
-		for(unsigned int q = 0; q < tx_len; q++) log(ERR, "%02X ", tx_buf[q]);
-		log(ERR, "\n\r");
         return SI_ERR_TIMEOUT;
     } 
 
@@ -71,12 +65,6 @@ si_err_t si_spi(const uint8_t* tx_buf, size_t tx_len, uint8_t* rx_buf, size_t rx
 		}
 		chThdSleep(TIME_MS2I(1));
 	}
-	log(VRB, "Transmitted: ");
-	for(unsigned int q = 0; q < tx_len; q++) log(VRB, "%02X ", tx_buf[q]);
-	log(VRB, "\n\rReceived: ");
-	for(unsigned int q = 0; q < rx_len; q++) log(VRB, "%02X ", rx_buf[q]);
-	log(VRB, "\n\r");
-	 
     spiReleaseBus(&SI_SPID);
     return SI_ERR_SUCCESS;
 }
@@ -92,7 +80,6 @@ si_err_t si_get_prop(si_prop_t prop, uint32_t* value, size_t len) {
 	//Round len up to nearest multiple of, then convert to bytes
 	len = (len + 7) / 8;
 	if(len < 1 || len > 4) {
-		log(ERR, "Invalid length when attempting to set property.");
 		return SI_ERR_INV_ARG;
 	}
 	//Need room for command, group, number of properties, and property + the actual values
@@ -122,7 +109,6 @@ si_err_t si_set_prop(si_prop_t prop, uint32_t value, size_t len) {
 	//Round len up to nearest multiple of, then convert to bytes
 	len = (len + 7) / 8;
 	if(len < 1 || len > 4) {
-		log(ERR, "Invalid length when attempting to set property.");
 		return SI_ERR_INV_ARG;
 	}
 	//Need room for command, group, number of properties, and property + the actual values
@@ -134,7 +120,6 @@ si_err_t si_set_prop(si_prop_t prop, uint32_t value, size_t len) {
 	for(size_t i = 0; i < len; i++) {
 		message[4 + i] = (value >> ((len - i - 1) * 8)) & 0xFF;
 	}	
-	log(VRB, "Setting group %u property %u to value %u.\n\r", SI_GRP(prop), SI_PROP(prop), value);
 	uint8_t cts = 0;
 	return si_spi(message, 4 + len, &cts, 1);
 }
@@ -156,7 +141,6 @@ si_err_t si_init(void) {
 	palSetPadMode(GPIOG, 14, PAL_MODE_ALTERNATE(5) | PAL_STM32_OSPEED_HIGHEST);
 	spiStart(&SI_SPID, &SI_SPI_CFG);
 	if(SI_SPID.state != SPI_READY) {
-		log(ERR, "SPI Driver not ready!\r\n");
 		return SI_ERR_NOT_READY;
 	}
 	 
@@ -174,20 +158,6 @@ si_err_t si_init(void) {
 		length = *ptr;
 		ptr++;
 	}
-	 
-	if(err != SI_ERR_SUCCESS) {
-		log(ERR, "Did not successfully init!\r\n");
-	}
-
-	uint32_t cnt1 = 0;
-	uint32_t misc = 0;
-	uint32_t search = 0;
-	uint32_t control = 0;
-	si_get_prop(SI_MODEM_OOK_CNT1, &cnt1, 8);
-	si_get_prop(SI_MODEM_OOK_MISC, &misc, 8);
-	si_get_prop(SI_MODEM_RAW_SEARCH, &search, 8);
-	si_get_prop(SI_MODEM_RAW_CONTROL, &control, 8);
-		
 	return err;
 }
 
@@ -222,10 +192,8 @@ si_err_t si_rx(uint8_t* buf, size_t max_buflen, uint16_t* b_read) {
 		err |= si_spi(get_int_status, 4, int_status, 9);
 		packet_rx_pend = (int_status[3] >> 4) & 0x01;
 		packet_rx = (int_status[4] >> 4) & 0x01;
-		log(VRB, "Waiting to receive packet...\r");
 	}
 	if(!(packet_rx || packet_rx_pend)) {
-		log(ERR, "Failed to receive packet!\r\n");
 		err |= SI_ERR_TXRX;
 	}
 
@@ -233,7 +201,6 @@ si_err_t si_rx(uint8_t* buf, size_t max_buflen, uint16_t* b_read) {
 	//check fifo
 	fifo_info[1] = 0x00;
 	err |= si_spi(fifo_info, 2, throw, 3);
-	log(VRB, "FIFO length is %u\r\n", throw[1]);
 	//*b_read = throw[1] - 1;
 	*b_read = 8;
 	 
@@ -255,7 +222,6 @@ si_err_t si_tx(uint8_t* buf, size_t buflen) {
 	if (buflen > 62) {
 		// The tx fifo size max is 64
 		//TODO there should be a way to load longer payloads but I'm not sure how
-		log(ERR, "Argument of size %u exceeds maximum capacity of TX_FIFO (2 byte length + 62 byte data).", buflen);
 		return SI_ERR_INV_ARG;
 	}
 	si_err_t err = SI_ERR_SUCCESS;
@@ -286,17 +252,14 @@ si_err_t si_tx(uint8_t* buf, size_t buflen) {
 	uint8_t packet_sent = 0x00;
 	uint32_t i = 0;
 	while(!(packet_sent || packet_sent_pend) && i++ < SI_TIMEOUT) {
-		log(VRB, "Waiting for packet to send...\r");
 		err |= si_spi(get_int_status, 4, int_status, 9);
 		packet_sent_pend = (int_status[3] >> 5) & 0x01;
 		packet_sent = (int_status[4] >> 5) & 0x01;
 		chThdSleep(TIME_MS2I(1));
 	}
 	if(packet_sent || packet_sent_pend) {
-		log(VRB, "Packet sent succesfully.\n\r");
 	}
 	else {
-		log(ERR, "Timed out waiting for packet to send!\n\r");
 		err |= SI_ERR_TXRX;
 	}
 	return err;
@@ -309,7 +272,6 @@ si_err_t si_check(void) {
 	uint8_t part_info = SI_CMD_PART_INFO;
 	uint8_t reply[9];
 	si_spi(&part_info, 1, reply, 9);
-	log(VRB, "Chip part info: %02X %02X\n\r", reply[2], reply[3]);
 	if(reply[2] == 0x44 && reply[3] == 0x64) {
 		return SI_ERR_SUCCESS;
 	} else return SI_ERR_INV_REPLY;
