@@ -1,5 +1,8 @@
 #ifndef MOTOR_C
 #define MOTOR_C
+#include "motor.h"
+
+#include <stdlib.h>
 
 /*
  * @brief		Initializes and configures a motor object
@@ -10,7 +13,7 @@
  * @param dir		References the line controlling the direction of the motor 
  * @param pwmc		Configuration of the PWM system (multiple motors may share this)
  */
-void motor_init(Motor *m, PWMDriver *pwmd, pwmchannel_t channel, const ioline_t pwm, const ioline_t dir, const PWMConfig *pwmc) {
+void motor_init(Motor *m, PWMDriver *pwmd, pwmchannel_t channel, ioline_t pwm, ioline_t dir, const PWMConfig *pwmc) {
 	// Init motor object
 	m->pwmd = pwmd;  
 	m->channel = channel;
@@ -20,8 +23,8 @@ void motor_init(Motor *m, PWMDriver *pwmd, pwmchannel_t channel, const ioline_t 
 	// TODO 
 	// Right now the pwm pin is arbitrarily set to AF1 (alternate function 1) to connect to timers 1 and 2
 	// If that should change, set to AF2 for timers 3, 4, 5 or AF3 for timers 8, 9, 10, 11
-	palSetMode(pwm, PAL_MODE_ALTERNATE(1));
-	palSetMode(dir, PAL_MODE_OUTPUT_PUSHPULL);	
+	palSetLineMode(m->pwm, PAL_MODE_ALTERNATE(1));
+	palSetLineMode(m->dir, PAL_MODE_OUTPUT_PUSHPULL);	
 	
 	// Ensures that the pwm driver only gets activated once, to avoid disabling the other channels
 	if(pwmd->state != PWM_READY) {
@@ -46,13 +49,13 @@ int motor_start(Motor *m, int power) {
 
 	// Assigns HIGH to forward and LOW to backwards
 	if(power > 0) {
-		palSetLine(dir, PAL_HIGH);
+	    palSetLine(m->dir);
 	} else {
-		palSetLine(dir, PAL_LOW);
+	    palClearLine(m->dir); 
 	}
 
 	// Sends pwm signals
-	pwmEnableChannel(m->pwmd, m->channel, PWM_PERCENTAGE_TO_WIDTH(abs(power)));
+	pwmEnableChannel(m->pwmd, m->channel, PWM_PERCENTAGE_TO_WIDTH(m->pwmd, abs(power)));
 
 	// Updates motor object state 
 	m->power = abs(power);	
@@ -68,6 +71,7 @@ int motor_start(Motor *m, int power) {
  */
 int motor_stop(Motor *m) {
 	pwmDisableChannel(m->pwmd, m->channel);
+	return 0;
 }
 
 /*
@@ -86,8 +90,8 @@ int motor_getPower(Motor *m) {
  * @param m		Pointer to a Motor object
  * @return		true if last assigned to go forward, false if not 
  */
-int motor_getDirection(Motor *m) {
-	return m->dir;
+bool motor_getDirection(Motor *m) {
+	return m->last_dir;
 }
 
 
