@@ -113,6 +113,8 @@ include $(CHIBIOS)/os/various/shell/shell.mk
 #include $(CHIBIOS)/os/various/lwip_bindings/lwip.mk
 include $(CHIBIOS)/os/various/fatfs_bindings/fatfs.mk
 
+include ./pecan-pico/pecan-pico.mk
+
 # Define linker script file here
 LDSCRIPT = STM32F429xI_SDRAM.ld
 
@@ -138,7 +140,7 @@ CSRC = $(STARTUPSRC) \
        ov5640.c \
        pi2c.c \
        membench.c \
-       bme280.c \
+       bme.c \
        collector.c \
        ptime.c \
        watchdog.c \
@@ -149,7 +151,8 @@ CSRC = $(STARTUPSRC) \
        sd.c \
        mpu9250.c \
        memcpy_dma.c \
-       gps.c
+       gps.c \
+       $(PECANSRC)
 # Include paths that ChibiStudio does in the background
 CHIBISTUDIO = ./tools/gnu_arm_tools/7.2-2017q4/arm-none-eabi/include/ ./tools/gnu_arm_tools/7.2-2017q4/arm-none-eabi/include/sys
 #       usbcfg.c \
@@ -186,6 +189,7 @@ INCDIR = $(CHIBISTUDIO) $(CHIBIOS)/os/license \
          $(HALINC) $(PLATFORMINC) $(BOARDINC) $(TESTINC) \
          $(STREAMSINC) $(SHELLINC) $(FATFSINC) $(CONFDIR) \
          $(CHIBIOS)/os/various encoder \
+	 $(PECANINC)
 
 #
 # Project, sources and paths
@@ -235,7 +239,7 @@ CPPWARN = -Wall -Wextra -Wundef
 #
 
 # List all user C define here, like -D_DEBUG=1
-UDEFS = 
+UDEFS = -DARM_MATH_CM4
 
 
 # Define ASM defines here
