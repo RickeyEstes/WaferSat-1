@@ -29,30 +29,33 @@
 #include "log.h"
 #include "ff.h"
 #include "pi2c.h"
+#include "pkttypes.h"
+#include "ax25_pad.h"
+#include "./pecan-pico/source/config/types.h"
+#include "types.h"
 
 int main(void) {
-	int init_err = 0;
-	halInit();
-	chSysInit();
-	log_init();
-	init_err &= gps_init();
+    halInit();
+    chSysInit();
 
-	while (true) {
-		log_data();
-		 
-		char log[1024];
-		char* ptr = log;
-		ptr += snprintf(ptr, log + 1024 - ptr, "I2C Scan:");
-		uint8_t addresses[127];
-		uint8_t numd = I2C_scan(addresses);
-		for(int i = 0; i < numd; i++) {
-			ptr += snprintf(ptr, log + 1024 - ptr, " %02X", addresses[i]);
-		}
-		log_debug(log);
-		 
-		LED_OK();
-		chThdSleepMilliseconds(1000);
-		LED_CLEAR();
-		chThdSleepMilliseconds(1000);
-	}
+    char *call_sign = "N6RAJ";
+    char *path = "WIDE";	    // TODO Change for testing
+    char *recipient = "N6RAJ";
+    char *message = "WAFERTEST";
+    bool ack = false;
+
+    radio_freq_t frequency = 144000000;
+    channel_hz_t step = 0;
+    radio_ch_t channel = 0;
+
+    // Magic number used by Pecan Pico for power, need to figure out units
+    radio_pwr_t power = 0x7F;
+
+    // Magic number used by Pecan Pico for Clear Channel Assessment (If channel is below this threshold, it is likely
+    // clear)
+    radio_squelch_t cca = 0x4F;
+    mod_t modulation = MOD_AFSK;
+    
+    packet_t msg = aprs_format_transmit_message(call_sign, path, recipient, message, ack);
+    transmitOnRadio(msg, frequency, step, channel, power, modulation, cca);
 }
