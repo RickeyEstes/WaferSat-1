@@ -99,9 +99,7 @@ void start_aprs_threads(radio_unit_t radio, radio_freq_t base_freq,
     }
 }
 
-/*
- *
- */
+// This is the function we should call in the wafersat project to get APRS
 bool transmitOnRadio(packet_t pp, const radio_freq_t base_freq,
                      const channel_hz_t step, radio_ch_t chan,
                      const radio_pwr_t pwr, const mod_t mod,
