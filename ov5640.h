@@ -16,7 +16,7 @@
 
 #include "ch.h"
 #include "hal.h"
-#include "types.h"
+#include "camera_types.h"
 
 /*===========================================================================*/
 /* Module constants.                                                         */

@@ -4,7 +4,7 @@
 #include "ch.h"
 #include "hal.h"
 #include "ptime.h"
-#include "types.h"
+#include "camera_types.h"
 
 #define BME_STATUS_BITS         2
 #define BME_STATUS_MASK         0x3

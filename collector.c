@@ -13,7 +13,7 @@
 #include "debug.h"
 //#include "config.h"
 //#include "ublox.h"
-#include "bme280.h"
+#include "bme.h"
 #include "padc.h"
 #include "tmp100.h"
 #include "mpu9250.h"
