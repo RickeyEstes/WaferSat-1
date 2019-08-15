@@ -16,20 +16,23 @@
 /*
  * Serial port definitions
  */
+// TODO Configure
 #define SERIAL_CFG_DEBUG_DRIVER		&SD3
 
 /*
  * SPI definitions
  */
+// TODO Configure
 #define SPI_BUS1_DRIVER             &SPID3
 
 /*
  * Radio SPI definitions.
  */
+// TODO Configure
 #define PKT_RADIO1_SPI              SPI_BUS1_DRIVER
 
 // Camera pins
-#define LINE_CAM_XCLK               PAL_LINE(GPIOC, 9U)
+/*#define LINE_CAM_XCLK               PAL_LINE(GPIOC, 9U)
 #define LINE_CAM_PCLK               PAL_LINE(GPIOC, 6U)
 #define LINE_CAM_VSYNC              PAL_LINE(GPIOB, 14U)
 #define LINE_CAM_D2                 PAL_LINE(GPIOA, 0U)
@@ -41,45 +44,47 @@
 #define LINE_CAM_D8                 PAL_LINE(GPIOA, 6U)
 #define LINE_CAM_D9                 PAL_LINE(GPIOA, 7U)
 #define LINE_CAM_EN                 PAL_LINE(GPIOC, 7U)
-#define LINE_CAM_RESET              PAL_LINE(GPIOB, 0U)
+#define LINE_CAM_RESET              PAL_LINE(GPIOB, 0U)*/
 
 // SD Card pins
-#define LINE_SD_CS                  PAL_LINE(GPIOC, 0U)
-#define LINE_SD_DET                 PAL_LINE(GPIOC, 8U)
+/*#define LINE_SD_CS                  PAL_LINE(GPIOC, 0U)
+#define LINE_SD_DET                 PAL_LINE(GPIOC, 8U)*/
 
 // ADC
-#define LINE_ADC_VSOL               PAL_LINE(GPIOC, 2U)
+/*#define LINE_ADC_VSOL               PAL_LINE(GPIOC, 2U)
 #define LINE_ADC_VBAT               PAL_LINE(GPIOB, 1U)
-#define LINE_ADC_VUSB               PAL_LINE(GPIOC, 4U)
+#define LINE_ADC_VUSB               PAL_LINE(GPIOC, 4U)*/
 
 // USB
-#define LINE_USB_ID                 PAL_LINE(GPIOA, 10U)
+/*#define LINE_USB_ID                 PAL_LINE(GPIOA, 10U)
 #define LINE_USB_VBUS               PAL_LINE(GPIOA,  9U)
 #define LINE_USB_DM                 PAL_LINE(GPIOA, 11U)
-#define LINE_USB_DP                 PAL_LINE(GPIOA, 12U)
+#define LINE_USB_DP                 PAL_LINE(GPIOA, 12U)*/
 
 // LED
-#define LINE_IO_BLUE                PAL_LINE(GPIOC, 1U)
-#define LINE_IO_GREEN               PAL_LINE(GPIOC, 3U)
+/*#define LINE_IO_BLUE                PAL_LINE(GPIOC, 1U)
+#define LINE_IO_GREEN               PAL_LINE(GPIOC, 3U)*/
 
 // I2C
-#define LINE_I2C_SCL                PAL_LINE(GPIOB, 8U)
-#define LINE_I2C_SDA                PAL_LINE(GPIOB, 9U)
+/*#define LINE_I2C_SCL                PAL_LINE(GPIOB, 8U)
+#define LINE_I2C_SDA                PAL_LINE(GPIOB, 9U)*/
 
 // GPS
-#define LINE_GPS_EN                 PAL_LINE(GPIOC, 5U)
+/*#define LINE_GPS_EN                 PAL_LINE(GPIOC, 5U)
 #define LINE_GPS_RESET              PAL_LINE(GPIOA, 15U)
 #define LINE_GPS_TXD                PAL_LINE(GPIOB, 13U)
 #define LINE_GPS_RXD                PAL_LINE(GPIOB, 12U)
-#define LINE_GPS_TIMEPULSE          PAL_LINE(GPIOB, 15U)
+#define LINE_GPS_TIMEPULSE          PAL_LINE(GPIOB, 15U)*/
 
 // IO
+// TODO Configure
 #define LINE_GPIO_PIN1              PAL_LINE(GPIOA, 8U)
 #define LINE_GPIO_PIN2              PAL_LINE(GPIOC, 15U)
 #define LINE_IO_TXD                 PAL_LINE(GPIOB, 10U)
 #define LINE_IO_RXD                 PAL_LINE(GPIOC, 11U)
 
 // APRS IO lines
+// TODO Configure
 #define LINE_IO1                    LINE_GPIO_PIN1
 #define LINE_IO2                    LINE_IO_TXD
 #define LINE_IO3                    LINE_IO_RXD
@@ -92,18 +97,21 @@
 /*
  * Radio GPIO definitions.
  */
+// TODO Configure
 #define LINE_RADIO_CS               PAL_LINE(GPIOC, 12U)
 #define LINE_RADIO_SDN              PAL_LINE(GPIOC, 10U)
-#define LINE_RADIO_NIRQ             PAL_LINE(GPIOD, 2U)
+//#define LINE_RADIO_NIRQ             PAL_LINE(GPIOD, 2U)
 #define LINE_RADIO_GPIO0            PAL_LINE(GPIOB, 7U)
 #define LINE_RADIO_GPIO1            PAL_LINE(GPIOB, 6U)
 
 // SPI
+// TODO Configure
 #define LINE_SPI_SCK                PAL_LINE(GPIOB, 3U)
 #define LINE_SPI_MISO               PAL_LINE(GPIOB, 4U)
 #define LINE_SPI_MOSI               PAL_LINE(GPIOB, 5U)
 
 /* TODO: Move into pktradio.h? */
+// TODO Configure
 #define BAND_MIN_2M_FREQ            144000000               /* Minimum allowed frequency in Hz */
 #define BAND_MAX_2M_FREQ            148000000               /* Maximum allowed frequency in Hz */
 #define BAND_STEP_2M_HZ             12500

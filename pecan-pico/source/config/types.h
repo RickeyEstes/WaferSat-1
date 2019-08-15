@@ -52,7 +52,10 @@ typedef enum { // Modulation type
 	MOD_2FSK
 } mod_t;
 
-typedef enum {
+// Commented out to avoid name conflicts with wafer camera code (identical declarations).
+// Since the wafer project only uses the comms part of the pecan-pico project, this can easily be removed
+// but is left intact just in case
+/*typedef enum {
 	RES_NONE = 0,
 	RES_QQVGA,
 	RES_QVGA,
@@ -61,7 +64,7 @@ typedef enum {
 	RES_XGA,
 	RES_UXGA,
 	RES_MAX
-} resolution_t;
+} resolution_t;*/
 
 typedef struct {
   radio_pwr_t       pwr;
@@ -124,7 +127,7 @@ typedef struct {
   bool              run_once;
 } bcn_app_conf_t;
 
-typedef struct {
+/*typedef struct {
   thread_conf_t     svc_conf;
   radio_tx_conf_t   radio_conf;
   bool              redundantTx;
@@ -135,7 +138,7 @@ typedef struct {
   uint8_t           quality;				// SSDV Quality ranging from 0-7
   bool              flip;                   // 180 image rotation
   uint32_t          buf_size;		    	// SRAM buffer size for the picture
-} img_app_conf_t;
+} img_app_conf_t;*/
 
 typedef struct {
   thread_conf_t     svc_conf;
@@ -183,8 +186,8 @@ typedef struct {
   bcn_app_conf_t	pos_pri;				// Primary position thread configuration
   bcn_app_conf_t	pos_sec;				// Secondary position thread configuration
 
-  img_app_conf_t	img_pri;				// Primary image thread configuration
-  img_app_conf_t	img_sec;				// Secondary image thread configuration
+  //img_app_conf_t	img_pri;				// Primary image thread configuration
+  //img_app_conf_t	img_sec;				// Secondary image thread configuration
 
   log_app_conf_t	log;					// Log transmission configuration
   thd_aprs_conf_t   aprs;
