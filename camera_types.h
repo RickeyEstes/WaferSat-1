@@ -1,5 +1,5 @@
-#ifndef __TYPES_H__
-#define __TYPES_H__
+#ifndef __CAMERA_TYPES_H__
+#define __CAMERA_TYPES_H__
 
 #include "ch.h"
 
@@ -17,5 +17,5 @@ typedef enum {
 } resolution_t;
 
 
-#endif /* __TYPES_H__ */
+#endif /* __CAMERA_TYPES_H__ */
 
