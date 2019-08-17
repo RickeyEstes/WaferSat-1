@@ -1,3 +1,8 @@
 build/
 .dep/
 os-community/
+*.o
+*.launch
+*.elf
+*.hex
+.project

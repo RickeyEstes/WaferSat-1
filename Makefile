@@ -10,6 +10,7 @@ ifeq ($(USE_OPT),)
 endif
 
 # C specific options here (added to USE_OPT).
+# -lm compiles with the math library, used for `pow` to calculate altitude
 ifeq ($(USE_COPT),)
   USE_COPT =
 endif
@@ -26,7 +27,7 @@ endif
 
 # Linker extra options here.
 ifeq ($(USE_LDOPT),)
-  USE_LDOPT = 
+  USE_LDOPT = -lm
 endif
 
 # Enable this if you want link time optimizations (LTO)
@@ -86,17 +87,18 @@ endif
 #
 
 # Define project name here
-PROJECT = ch
+PROJECT = wafersat
 
 # Imported source files and paths
 CHIBIOS = ./chibios182#../../..
+CONFDIR = ./conf
 CHIBIOS_CONTRIB = $(CHIBIOS)/community
 # Startup files.
 include $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/mk/startup_stm32f4xx.mk
 # HAL-OSAL files (optional).
 include $(CHIBIOS_CONTRIB)/os/hal/hal.mk
 include $(CHIBIOS_CONTRIB)/os/hal/ports/STM32/STM32F4xx/platform.mk
-include ./WAFERSAT_3IN/board_fixed.mk
+include ./conf/WAFERSAT_3IN/board_fixed.mk
 #include ./WAFERSAT_TEST_FIXTURE/board.mk 
 #include $(CHIBIOS)/os/hal/boards/ST_STM32F429I_DISCOVERY/board.mk
 include $(CHIBIOS)/os/hal/osal/rt/osal.mk
@@ -132,27 +134,22 @@ CSRC = $(STARTUPSRC) \
        $(FATFSSRC) \
        $(CHIBIOS_CONTRIB)/os/various/devices_lib/lcd/ili9341.c \
 	   $(CHIBIOS)/os/various/syscalls.c \
-       main.c \
-       log.c \
-       dcmi_dma.c \
-       ov5640.c \
-       pi2c.c \
-       membench.c \
-       bme280.c \
-       collector.c \
-       ptime.c \
-       watchdog.c \
-       debug.c \
-       padc.c \
-       ltr329.c \
-       tmp100.c \
-       sd.c \
-       mpu9250.c \
-       memcpy_dma.c \
-       gps.c
+       src/main.c \
+       src/log.c \
+       src/dcmi_dma.c \
+       src/camera/ov5640.c \
+       src/pi2c.c \
+       src/sensors/therm.c \
+       src/sensors/adc.c \
+       src/sensors/imu.c \
+       src/sensors/bme.c \
+       src/sensors/ltr.c \
+       src/sensors/common.c \
+       src/radio/si.c \
+       src/sd.c \
+       src/sensors/gps.c
 # Include paths that ChibiStudio does in the background
 CHIBISTUDIO = ./tools/gnu_arm_tools/7.2-2017q4/arm-none-eabi/include/ ./tools/gnu_arm_tools/7.2-2017q4/arm-none-eabi/include/sys
-#       usbcfg.c \
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
 CPPSRC = $(CHCPPSRC)
@@ -242,7 +239,7 @@ UDEFS =
 UADEFS =
 
 # List all user directories here
-UINCDIR = 
+UINCDIR = inc
 
 # List the user directory to look for the libraries here
 ULIBDIR =
