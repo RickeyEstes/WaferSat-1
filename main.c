@@ -19,8 +19,9 @@ int main(void) {
 	halInit();
 	chSysInit();
 	log_init();
-	init_err &= gps_init();
 
+	init_err &= gps_init();
+	sd_init();
 	while (true) {
 		log_data();
 		LED_OK();

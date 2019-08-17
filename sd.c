@@ -37,16 +37,22 @@ static virtual_timer_t tmr;
 static void sd_insert_handler(eventid_t id) {
 	FRESULT err;
 	
+	chprintf((BaseSequentialStream*) &SD1, "sd.c: SD card inserted\n");
+
 	(void) id;
 #if HAL_USE_SDC
-	if (sdcConnect(&SDCD1))
+	if (sdcConnect(&SDCD1)) {
 #else
-	if (mmcConnect(&MMCD1))
+	if (mmcConnect(&MMCD1)) {
 #endif
-		return;
+	  chprintf((BaseSequentialStream*) &SD1, "sd.c: Error connecting to SD card\n");
+	  return;
+	}
 
 	err = f_mount(&SDC_FS, "/", 1);
 	if (err != FR_OK) {
+	    chprintf((BaseSequentialStream*) &SD1, "sd.c: SD card inserted but mount failed, error %d\n", err);
+
 #if HAL_USE_SDC
 		sdcDisconnect(&SDCD1);
 #else
@@ -55,11 +61,14 @@ static void sd_insert_handler(eventid_t id) {
 		return;
 	}
 
+	chprintf((BaseSequentialStream*) &SD1, "sd.c: SD card mounted successfully\n");
 	sd_fs_ready = TRUE;
 }
 
 static void sd_remove_handler(eventid_t id) {
 	(void) id;
+	chprintf((BaseSequentialStream*) &SD1, "sd.c: SD card removed\n");
+
 #if HAL_USE_SDC
 	sdcDisconnect(&SDCD1);
 #else
@@ -99,6 +108,12 @@ static void sd_tmr_init(void *p) {
 	chSysUnlock();
 }
 
+static uint8_t sdc_driver_scratchpad[512];
+static const SDCConfig sdc_config = {
+  sdc_driver_scratchpad,
+  SDC_MODE_4BIT
+};
+
 
 uint8_t sd_init(void) {
 	/*
@@ -106,7 +121,7 @@ uint8_t sd_init(void) {
 	*/
 	static const evhandler_t sd_evhndl[] = {sd_insert_handler, sd_remove_handler};
 	event_listener_t sd_inserted_listener, sd_removed_listener;
-	sdcStart(&SDCD1, NULL);
+	sdcStart(&SDCD1, &sdc_config);
 	// Activate card insertion monitor
 	sd_tmr_init(&SDCD1);
 	chEvtRegister(&sd_inserted_event, &sd_inserted_listener, 0);
