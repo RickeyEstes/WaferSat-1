@@ -115,7 +115,7 @@ void log_set_level(int level) {
 }
 
 void log_data(void) {
- 
+
 	char log[1024];
 	sensor_hnprintf(log, 1024);
 	
@@ -156,7 +156,80 @@ void log_image(void) {
 #endif /* LOG_MEM */
 	return;
 }
-  
+
+/**
+* Logs an array of values to serial or to memory.
+* @param buf	the buffer to log
+* @param size	size of each buf member in bytes
+* @param buflen	the length of the buffer
+* @param fmt	format string. the last formatting sign (%...\0) is assumed to be
+* 	the formatting of each value in the buffer. Can also contain regular printf
+* 	formatting.
+*/
+void log_buf(int level, const char *file, int line, void *buf, size_t size,
+	size_t buflen, const char *fmt, ...) {
+  /* Acquire lock */
+	chMtxLock(&(L.mtx));
+  /* Get current time */
+	long int ms = log_ms();
+	long int s = (ms / 1000) % 60;
+	long int m = (ms / (60 * 1000)) % 60;
+	long int h = ms / (3600 * 1000);
+	ms = ms % 1000;
+	va_list args;
+	char* buf_fmt = rindex(fmt, '%');
+
+	uint8_t *bytes = (uint8_t*) buf;
+
+	*buf_fmt = '\0';
+
+#if LOG_SERIAL
+	if (level >= L.level) {
+#if LOG_USE_COLOR
+		chprintf(
+			(BaseSequentialStream*) &SD1,
+			"%li:%02li:%02li.%03li\t%-5s\x1b[0m \x1b[90m%\ts:%d:\x1b[0m\t",
+			h, m, s, ms, level_colors[level], level_names[level], file, line
+		);
+#else /* !LOG_USE_COLOR */
+		chprintf((BaseSequentialStream*) &SD1,
+			"%li:%02li:%02li.%03li\t%-5s\t%s:%d:\t",
+			h, m, s, ms, level_names[level], file, line
+		);
+#endif /* LOG_USE_COLOR */
+		va_start(args, fmt);
+		chvprintf((BaseSequentialStream*) &SD1, fmt, args);
+		va_end(args);
+		*buf_fmt = '%';
+		for(size_t i = 0; i < buflen; i++) {
+			chprintf((BaseSequentialStream*) &SD1, buf_fmt,
+				*(bytes + (i * size)));
+		}
+		chprintf((BaseSequentialStream*) &SD1, "\n\r");
+	}
+#endif /* LOG_SERIAL */
+
+  /* Log to file */
+#if LOG_MEM
+    f_printf(
+		&(L.fp), "%li:%02li:%02li.%03li\t%-5s\t%s:%d:\t",
+		h, m, s, ms, level_names[level], file, line
+	);
+    va_start(args, fmt);
+    f_vprintf(&(L.fp), fmt, args);
+    va_end(args);
+	*buf_fmt = '%';
+	for(size_t i = 0; i < buflen; i++) {
+		f_printf(&(L.fp), buf_fmt, *(bytes + (i * size)));
+	}
+    f_printf(&(L.fp), "\n");
+    f_sync(&(L.fp));
+#endif /* LOG_MEM */
+
+  /* Release lock */
+	chMtxUnlock(&(L.mtx));
+}
+
 void log_log(int level, const char *file, int line, const char *fmt, ...) {
   /* Acquire lock */
 	chMtxLock(&(L.mtx));

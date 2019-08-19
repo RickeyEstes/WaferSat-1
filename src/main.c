@@ -38,10 +38,9 @@ int main(void) {
 	log_info("Initialized with err %u.", error);
 
 	while (true) {
-		log_data();
-		const char *test = "Hello world!";
-		si_tx(test, 12);
-		log_info("Transmitted with err %u.", error);
+		uint16_t test[] = {484, 1964, 1237};
+		logb_info(test, sizeof(test[0]), sizeof(test)/sizeof(test[0]),
+			"TESTING %u %i %f: %u ", 1, -2, 3.0);
 		LED_OK();
 		chThdSleepMilliseconds(1000);
 		LED_CLEAR();
