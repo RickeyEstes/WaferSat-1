@@ -20,6 +20,9 @@
 #include "si446x.h"
 #include "debug.h"
 #include "geofence.h"
+#include "pktradio.h"
+#include "portab.h"
+#include "config.h"
 
 /*===========================================================================*/
 /* Module local definitions.                                                 */
@@ -878,11 +881,10 @@ radio_freq_t pktComputeOperatingFrequency(const radio_unit_t radio,
    * Check for dynamic frequency determination.
    * Dynamic can return an absolute frequency or a further special code.
    */
-  if(base_freq == FREQ_GEOFENCE) {
-    /*
+   // Commented out because we will not ever dynamically change the frequency
+  /*if(base_freq == FREQ_GEOFENCE) {			    
      * Get frequency by geofencing.
      * Geofencing can return special code FREQ_APRS_DEFAULT.
-     */
     base_freq = getAPRSRegionFrequency();
     step = 0;
     chan = 0;
@@ -893,6 +895,7 @@ radio_freq_t pktComputeOperatingFrequency(const radio_unit_t radio,
     step = 0;
     chan = 0;
   }
+  */
 
   /* Calculate operating frequency. */
   radio_freq_t op_freq = base_freq + (step * chan);
@@ -952,7 +955,7 @@ void pktLLDradioStandby(const radio_unit_t radio) {
  * @notapi
  */
 bool pktLLDradioSendPacket(radio_task_object_t *rto) {
-  bool status;
+  bool status = true;
   /* TODO: Implement VMT to functions per radio type. */
   switch(rto->type) {
   case MOD_2FSK:

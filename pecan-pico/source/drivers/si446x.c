@@ -421,7 +421,7 @@ static bool Si446x_init(const radio_unit_t radio) {
       0x15,   // GPIO1        GPIO_MODE = RAW_RX_DATA
       0x21,   // GPIO2        GPIO_MODE = RX_STATE
       0x20,   // GPIO3        GPIO_MODE = TX_STATE
-      0x1B,   // NIRQ         NIRQ_MODE = CCA
+      0x1B,   // NIRQ         NIRQ_MODE = CCA	    // Interrupt line, used for Clear Channel Assessment, not interrupts 
       0x0B,   // SDO          SDO_MODE = SDO
       0x00    // GEN_CONFIG
   };

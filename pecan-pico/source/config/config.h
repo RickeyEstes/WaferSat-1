@@ -1,8 +1,8 @@
 #ifndef __CONFIG_H__
 #define __CONFIG_H__
 
-#define TRACE_TIME					TRUE		/* Enables time tracing on debugging port */
-#define TRACE_FILE					TRUE		/* Enables file and line tracing on debugging port */
+//#define TRACE_TIME					TRUE		/* Enables time tracing on debugging port */
+//#define TRACE_FILE					TRUE		/* Enables file and line tracing on debugging port */
 
 #include "types.h"
 

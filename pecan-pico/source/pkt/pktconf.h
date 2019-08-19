@@ -189,7 +189,7 @@ typedef uint32_t            statusmask_t;    /**< Mask of status identifiers. */
 /*===========================================================================*/
 
 #if !defined(PKT_SVC_USE_RADIO1)
-#define PKT_SVC_USE_RADIO1 FALSE
+#define PKT_SVC_USE_RADIO1 TRUE 
 #endif
 
 #if !defined(PKT_SVC_USE_RADIO2)

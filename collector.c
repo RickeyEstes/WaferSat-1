@@ -31,9 +31,9 @@
 /* Module local variables.                                                   */
 /*===========================================================================*/
 
-static dataPoint_t dataPoints[2];
+//static dataPoint_t dataPoints[2];
 static dataPoint_t* lastDataPoint;
-static bool threadStarted = false;
+//static bool threadStarted = false;
 static uint8_t bme280_error;
 
 /**
@@ -82,7 +82,7 @@ dataPoint_t* getLastDataPoint(void) {
  *
  * @notapi
  */
-static void getPositionFallback(dataPoint_t* tp,
+/*static void getPositionFallback(dataPoint_t* tp,
                                 dataPoint_t* ltp,
                                 gpsState_t state) {
   tp->gps_state = state;
@@ -100,8 +100,8 @@ static void getPositionFallback(dataPoint_t* tp,
   getTime(&time);
   if(time.year != RTC_BASE_YEAR)
     /* The RTC has been set so use RTC time. */
-    tp->gps_time = date2UnixTimestamp(&time);
-}
+//    tp->gps_time = date2UnixTimestamp(&time);
+//}
 
 /**
  * @brief   Acquire GPS position and time data.
@@ -122,13 +122,13 @@ static void getPositionFallback(dataPoint_t* tp,
  * @retval      false   if no new lock attained and stored data used
  * @notapi
  */
-static bool aquirePosition(dataPoint_t* tp, dataPoint_t* ltp,
-                           sysinterval_t timeout) {
-  (void) tp;
-  (void) ltp;
-  (void) timeout;
+//static bool aquirePosition(dataPoint_t* tp, dataPoint_t* ltp,
+//                           sysinterval_t timeout) {
+//  (void) tp;
+//  (void) ltp;
+//  (void) timeout;
 //  sysinterval_t start = chVTGetSystemTime();
-  TRACE_WARN("COLL > GPS not enabled, but asking for position");
+//  TRACE_WARN("COLL > GPS not enabled, but asking for position");
 //  gpsFix_t gpsFix = {0};
 //
 //  /*
@@ -263,8 +263,8 @@ static bool aquirePosition(dataPoint_t* tp, dataPoint_t* ltp,
 //  tp->gps_pdop = (gpsFix.pdop+3)/5;
 //  tp->gps_ttff = TIME_I2S(chVTGetSystemTime() - start); // Time to first fix
 //  return true;
-  return false;
-}
+//  return false;
+//}
 
 /**
  * @brief   Get voltage status and save in datapoint.

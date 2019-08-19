@@ -55,7 +55,7 @@ const conf_t conf_flash_default = {
         .aprs_msg = true, // Enable APRS message reception on this app
     },
 
-    // Primary image app
+    /*// Primary image app		// Commented out, since we will capture images ourselves
     .img_pri = {
         .svc_conf = {
             .active = false,
@@ -104,7 +104,7 @@ const conf_t conf_flash_default = {
         .quality = 4,
         .buf_size = 15 * 1024,
         .redundantTx = false
-    },
+    },*/
 
     // Log app
     .log = {
