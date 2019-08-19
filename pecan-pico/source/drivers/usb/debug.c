@@ -54,11 +54,11 @@ void debug_print(char *type, char* filename, uint32_t line, char* format, ...)
 	}
 
 	if(TRACE_TIME) {
-		chprintf((BaseSequentialStream*)&SD3, "[%8d.%03d]", chVTGetSystemTime()/CH_CFG_ST_FREQUENCY, (chVTGetSystemTime()*1000/CH_CFG_ST_FREQUENCY)%1000);
+		chprintf((BaseSequentialStream*)&SD1, "[%8d.%03d]", chVTGetSystemTime()/CH_CFG_ST_FREQUENCY, (chVTGetSystemTime()*1000/CH_CFG_ST_FREQUENCY)%1000);
 	}
 	chprintf((BaseSequentialStream*)&SD3, "[%s]", type);
 	if(TRACE_FILE) {
-		chprintf((BaseSequentialStream*)&SD3, "[%12s %04d]", filename, line);
+		chprintf((BaseSequentialStream*)&SD1, "[%12s %04d]", filename, line);
 	}
 	chprintf((BaseSequentialStream*)&SD3, " %s\r\n", str);
 

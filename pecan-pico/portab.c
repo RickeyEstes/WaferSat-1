@@ -22,6 +22,7 @@
 #include "usb.h"
 #include "types.h"
 #include "si446x.h"
+#include "board.h"
 #include <stdarg.h>
 
 /*===========================================================================*/
@@ -114,10 +115,10 @@ const SerialConfig debug_config = {
 /*===========================================================================*/
 
 void pktConfigSerialDiag(void) {
-  /* USART3 TX.       */
-  palSetLineMode(LINE_USART3_TX, PAL_MODE_ALTERNATE(7));
-  /* USART3 RX.       */
-  palSetLineMode(LINE_USART3_RX, PAL_MODE_ALTERNATE(7));
+  /* USART1 TX.       */
+  palSetLineMode(LINE_USART1_TX, PAL_MODE_ALTERNATE(7));
+  /* USART1 RX.       */
+  palSetLineMode(LINE_USART1_RX, PAL_MODE_ALTERNATE(7));
 }
 
 /**
@@ -138,6 +139,7 @@ void pktConfigSerialDiag(void) {
  *
  * @return State of lines regardless of general or specific use.
  */
+// NOTE - For Wafer project, GPIO lines are unused
 uint8_t pktReadIOlines() {
   return palReadLine(LINE_GPIO_PIN1)
       | palReadLine(LINE_IO_TXD) << 1

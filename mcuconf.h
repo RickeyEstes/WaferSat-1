@@ -129,8 +129,8 @@
 /*
  * GPT driver system settings.
  */
-#define STM32_GPT_USE_TIM1                  TRUE
-#define STM32_GPT_USE_TIM2                  FALSE
+#define STM32_GPT_USE_TIM1		    FALSE
+#define STM32_GPT_USE_TIM2		    TRUE 
 #define STM32_GPT_USE_TIM3                  FALSE
 #define STM32_GPT_USE_TIM4                  FALSE
 #define STM32_GPT_USE_TIM5                  FALSE
@@ -193,8 +193,8 @@
 /*
  * ICU driver system settings.
  */
-#define STM32_ICU_USE_TIM1                  TRUE	// TODO Change according to pin assignment
-#define STM32_ICU_USE_TIM2                  FALSE
+#define STM32_ICU_USE_TIM1                  FALSE	// TODO Change according to pin assignment
+#define STM32_ICU_USE_TIM2		    TRUE 
 #define STM32_ICU_USE_TIM3                  FALSE
 #define STM32_ICU_USE_TIM4                  FALSE
 #define STM32_ICU_USE_TIM5                  FALSE
@@ -276,8 +276,8 @@
 #define STM32_SPI_USE_SPI2                  FALSE
 #define STM32_SPI_USE_SPI3                  FALSE
 #define STM32_SPI_USE_SPI4                  FALSE
-#define STM32_SPI_USE_SPI5                  TRUE
-#define STM32_SPI_USE_SPI6                  FALSE
+#define STM32_SPI_USE_SPI5		    FALSE 
+#define STM32_SPI_USE_SPI6		    TRUE 
 #define STM32_SPI_SPI1_RX_DMA_STREAM        STM32_DMA_STREAM_ID(2, 0)
 #define STM32_SPI_SPI1_TX_DMA_STREAM        STM32_DMA_STREAM_ID(2, 3)
 #define STM32_SPI_SPI2_RX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 3)

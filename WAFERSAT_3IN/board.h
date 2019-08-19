@@ -243,7 +243,7 @@
 #define LINE_DCMI_VSYNC             PAL_LINE(GPIOB, 7U)
 #define LINE_SD_D4                  PAL_LINE(GPIOB, 8U)
 #define LINE_SD_D5                  PAL_LINE(GPIOB, 9U)
-#define LINE_UART3_TX               PAL_LINE(GPIOB, 10U)
+#define LINE_RADIO_GPIO1	    PAL_LINE(GPIOB, 10U)
 #define LINE_UART3_RX               PAL_LINE(GPIOB, 11U)
 #define LINE_OTG_HS_ID              PAL_LINE(GPIOB, 12U)
 #define LINE_OTG_HS_VBUS            PAL_LINE(GPIOB, 13U)
@@ -277,7 +277,7 @@
 #define LINE_FMC_D14                PAL_LINE(GPIOD, 9U)
 #define LINE_FMC_D15                PAL_LINE(GPIOD, 10U)
 #define LINE_UART3_CTS              PAL_LINE(GPIOD, 11U)
-#define LINE_UART3_RTS              PAL_LINE(GPIOD, 12U)
+#define LINE_RADIO_GPIO0	    PAL_LINE(GPIOD, 12U)
 #define LINE_HEADER_PIND13          PAL_LINE(GPIOD, 13U)
 #define LINE_FMC_D0                 PAL_LINE(GPIOD, 14U)
 #define LINE_FMC_D1                 PAL_LINE(GPIOD, 15U)
@@ -319,8 +319,6 @@
 #define LINE_SPI1_CS1               PAL_LINE(GPIOG, 3U)
 #define LINE_FMC_BA0                PAL_LINE(GPIOG, 4U)
 #define LINE_FMC_BA1                PAL_LINE(GPIOG, 5U)
-#define LINE_RADIO_GPIO1            PAL_LINE(GPIOG, 6U)
-#define LINE_RADIO_GPIO0            PAL_LINE(GPIOG, 7U)
 #define LINE_FMC_SDCLK              PAL_LINE(GPIOG, 8U)
 #define LINE_DCMI_D2                PAL_LINE(GPIOG, 10U)
 #define LINE_DCMI_D3                PAL_LINE(GPIOG, 11U)
@@ -334,6 +332,7 @@
 #define LINE_I2C2_SDA               PAL_LINE(GPIOH, 5U)
 #define LINE_DCMI_D0                PAL_LINE(GPIOH, 9U)
 #define LINE_DCMI_D1                PAL_LINE(GPIOH, 10U)
+#define LINE_RADIO_SDN		    PAL_LINE(GPIOH, 12U)
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */

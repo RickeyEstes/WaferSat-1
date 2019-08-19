@@ -10,6 +10,7 @@
 #define PORTAB_H_
 
 #include "board.h"
+#include "debug.h"
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -18,19 +19,16 @@
 /*
  * Serial port definitions
  */
-// TODO Configure
-#define SERIAL_CFG_DEBUG_DRIVER		&SD3
+#define SERIAL_CFG_DEBUG_DRIVER		&SD_console	    // Writes to same output stream as main wafer project
 
 /*
  * SPI definitions
  */
-// TODO Configure
-#define SPI_BUS1_DRIVER             &SPID5
+#define SPI_BUS1_DRIVER             &SPID6		    // Uses same SPI driver as wafer
 
 /*
  * Radio SPI definitions.
  */
-// TODO Configure
 #define PKT_RADIO1_SPI              SPI_BUS1_DRIVER
 
 // Camera pins
@@ -68,8 +66,8 @@
 #define LINE_IO_GREEN               PAL_LINE(GPIOC, 3U)*/
 
 // I2C
-#define LINE_I2C_SCL                LINE_I2C2_SCL
-#define LINE_I2C_SDA                LINE_I2C2_SDA
+#define LINE_I2C_SCL                LINE_I2C2_SCL   // Defined in wafer board.h
+#define LINE_I2C_SDA                LINE_I2C2_SDA   // Defined in wafer board.h
 
 // GPS
 /*#define LINE_GPS_EN                 PAL_LINE(GPIOC, 5U)
@@ -79,18 +77,16 @@
 #define LINE_GPS_TIMEPULSE          PAL_LINE(GPIOB, 15U)*/
 
 // IO
-// TODO Configure
-#define LINE_GPIO_PIN1              PAL_LINE(GPIOA, 8U)
-#define LINE_GPIO_PIN2              PAL_LINE(GPIOC, 15U)
-#define LINE_IO_TXD                 PAL_LINE(GPIOB, 10U)
-#define LINE_IO_RXD                 PAL_LINE(GPIOC, 11U)
+#define LINE_GPIO_PIN1		    PAL_NOLINE	    //PAL_LINE(GPIOA, 8U)   <-- old assignments
+#define LINE_GPIO_PIN2		    PAL_NOLINE	    //PAL_LINE(GPIOC, 15U)
+#define LINE_IO_TXD		    LINE_UART1_TX   // Defined in wafer board.h
+#define LINE_IO_RXD		    LINE_UART1_RX   // Defined in wafer board.h
 
-// APRS IO lines
-// TODO Configure
-#define LINE_IO1                    LINE_GPIO_PIN1
-#define LINE_IO2                    LINE_IO_TXD
-#define LINE_IO3                    LINE_IO_RXD
-#define LINE_IO4                    LINE_GPIO_PIN2
+// APRS IO lines	---	    We can push/pull them remotely, unused for now
+#define LINE_IO1                    PAL_NOLINE	    //LINE_GPIO_PIN1	    <-- old assignments 
+#define LINE_IO2                    PAL_NOLINE	    //LINE_IO_TXD
+#define LINE_IO3                    PAL_NOLINE	    //LINE_IO_RXD
+#define LINE_IO4                    PAL_NOLINE	    //LINE_GPIO_PIN2
 #define LINE_IO5                    PAL_NOLINE
 #define LINE_IO6                    PAL_NOLINE
 #define LINE_IO7                    PAL_NOLINE
@@ -100,20 +96,14 @@
  * Radio GPIO definitions.
  */
 #define LINE_RADIO_CS               LINE_SPI6_CS1		// Chip select
-
-// TODO Assign			    NOT CORRECT (left in so code compiles)
-#define LINE_RADIO_SDN              PAL_NOLINE			// Shutdown pin (driving high shuts down the peripheral)
-
 #define LINE_RADIO_NIRQ		    LINE_RADIO_IRQ		// Interrupt pin used for CCA
 
 // SPI
-// TODO Configure
-#define LINE_SPI_SCK		    LINE_SPI6_SCK
+#define LINE_SPI_SCK		    LINE_SPI6_SCK   // <--- All defined in wafer board.h
 #define LINE_SPI_MISO               LINE_SPI6_MISO
 #define LINE_SPI_MOSI		    LINE_SPI6_MOSI
 
 /* TODO: Move into pktradio.h? */
-// TODO Configure
 #define BAND_MIN_2M_FREQ            144000000               /* Minimum allowed frequency in Hz */
 #define BAND_MAX_2M_FREQ            148000000               /* Maximum allowed frequency in Hz */
 #define BAND_STEP_2M_HZ             12500
@@ -156,8 +146,8 @@
 #define ENABLE_SERIAL_DEBUG             TRUE
 
 #if ENABLE_SERIAL_DEBUG == TRUE
-#define LINE_USART3_TX                  LINE_IO_TXD
-#define LINE_USART3_RX                  LINE_IO_RXD
+#define LINE_USART1_TX                  LINE_IO_TXD
+#define LINE_USART1_RX                  LINE_IO_RXD
 #endif
 
 /* If set to true, the console using USB interface will be switched on.
@@ -171,7 +161,8 @@
 /**
  *  ICU related definitions.
  */
-#define PKT_RADIO1_ICU                  &ICUD1
+// TODO Verify these are compatible with wafer pin assignments
+#define PKT_RADIO1_ICU                  &ICUD2
 
 #define PWM_ICU_CLK                     STM32_TIMCLK1
 
