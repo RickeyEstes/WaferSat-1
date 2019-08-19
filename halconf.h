@@ -98,8 +98,12 @@
  */
 #if !defined(HAL_USE_ICU) || defined(__DOXYGEN__)
 #define HAL_USE_ICU                 TRUE
+#define ICU_DRIVER_EXT_FIELDS                                                \
+                        void *link;                                          \
+                        virtual_timer_t cca_timer;                           \
+                        virtual_timer_t icu_timer;                           \
+                        virtual_timer_t pwm_timer;
 #endif
-
 /**
  * @brief   Enables the MAC subsystem.
  */
