@@ -31,18 +31,19 @@
 #include "pi2c.h"
 #include "pkttypes.h"
 #include "ax25_pad.h"
-#include "./pecan-pico/source/config/types.h"
 #include "types.h"
+#include "aprs.h"
+#include "radio.h"
 
 int main(void) {
     halInit();
     chSysInit();
 
-    char *call_sign = "N6RAJ";
-    char *path = "WIDE";	    // TODO Change for testing
-    char *recipient = "N6RAJ";
-    char *message = "WAFERTEST";
-    bool ack = false;
+    const char *call_sign = "N6RAJ";
+    const char *path = "WIDE";	    // TODO Change for testing
+    const char *recipient = "N6RAJ";
+    const char *text = "WAFERTEST";
+    const bool ack = false;
 
     radio_freq_t frequency = 144000000;
     channel_hz_t step = 0;
@@ -56,6 +57,6 @@ int main(void) {
     radio_squelch_t cca = 0x4F;
     mod_t modulation = MOD_AFSK;
     
-    packet_t msg = aprs_format_transmit_message(call_sign, path, recipient, message, ack);
+    packet_t msg = aprs_format_transmit_message(call_sign, path, recipient, text, ack);
     transmitOnRadio(msg, frequency, step, channel, power, modulation, cca);
 }
