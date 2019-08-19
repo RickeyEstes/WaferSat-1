@@ -9,6 +9,8 @@
 #ifndef PORTAB_H_
 #define PORTAB_H_
 
+#include "board.h"
+
 /*===========================================================================*/
 /* Module constants.                                                         */
 /*===========================================================================*/
@@ -23,7 +25,7 @@
  * SPI definitions
  */
 // TODO Configure
-#define SPI_BUS1_DRIVER             &SPID3
+#define SPI_BUS1_DRIVER             &SPID5
 
 /*
  * Radio SPI definitions.
@@ -32,7 +34,7 @@
 #define PKT_RADIO1_SPI              SPI_BUS1_DRIVER
 
 // Camera pins
-/*#define LINE_CAM_XCLK               PAL_LINE(GPIOC, 9U)
+/*#define LINE_CAM_XCLK             PAL_LINE(GPIOC, 9U)
 #define LINE_CAM_PCLK               PAL_LINE(GPIOC, 6U)
 #define LINE_CAM_VSYNC              PAL_LINE(GPIOB, 14U)
 #define LINE_CAM_D2                 PAL_LINE(GPIOA, 0U)
@@ -66,8 +68,8 @@
 #define LINE_IO_GREEN               PAL_LINE(GPIOC, 3U)*/
 
 // I2C
-/*#define LINE_I2C_SCL                PAL_LINE(GPIOB, 8U)
-#define LINE_I2C_SDA                PAL_LINE(GPIOB, 9U)*/
+#define LINE_I2C_SCL                LINE_I2C2_SCL
+#define LINE_I2C_SDA                LINE_I2C2_SDA
 
 // GPS
 /*#define LINE_GPS_EN                 PAL_LINE(GPIOC, 5U)
@@ -97,18 +99,18 @@
 /*
  * Radio GPIO definitions.
  */
-// TODO Configure
-#define LINE_RADIO_CS               PAL_LINE(GPIOC, 12U)
-#define LINE_RADIO_SDN              PAL_LINE(GPIOC, 10U)
-//#define LINE_RADIO_NIRQ             PAL_LINE(GPIOD, 2U)
-#define LINE_RADIO_GPIO0            PAL_LINE(GPIOB, 7U)
-#define LINE_RADIO_GPIO1            PAL_LINE(GPIOB, 6U)
+#define LINE_RADIO_CS               LINE_SPI6_CS1		// Chip select
+
+// TODO Assign			    NOT CORRECT (left in so code compiles)
+#define LINE_RADIO_SDN              PAL_NOLINE			// Shutdown pin (driving high shuts down the peripheral)
+
+#define LINE_RADIO_NIRQ		    LINE_RADIO_IRQ		// Interrupt pin used for CCA
 
 // SPI
 // TODO Configure
-#define LINE_SPI_SCK                PAL_LINE(GPIOB, 3U)
-#define LINE_SPI_MISO               PAL_LINE(GPIOB, 4U)
-#define LINE_SPI_MOSI               PAL_LINE(GPIOB, 5U)
+#define LINE_SPI_SCK		    LINE_SPI6_SCK
+#define LINE_SPI_MISO               LINE_SPI6_MISO
+#define LINE_SPI_MOSI		    LINE_SPI6_MOSI
 
 /* TODO: Move into pktradio.h? */
 // TODO Configure
@@ -133,7 +135,7 @@
 
 /* LED status indicators (set to PAL_NOLINE if not available). */
 #define LINE_OVERFLOW_LED               PAL_NOLINE
-#define LINE_DECODER_LED                LINE_IO_BLUE
+#define LINE_DECODER_LED		PAL_NOLINE 
 #define LINE_SQUELCH_LED                PAL_NOLINE
 #define LINE_NO_FIFO_LED                PAL_NOLINE
 #define LINE_NO_BUFF_LED                PAL_NOLINE
@@ -169,7 +171,7 @@
 /**
  *  ICU related definitions.
  */
-#define PKT_RADIO1_ICU                  &ICUD4
+#define PKT_RADIO1_ICU                  &ICUD1
 
 #define PWM_ICU_CLK                     STM32_TIMCLK1
 
