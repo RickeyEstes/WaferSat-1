@@ -1,13 +1,9 @@
 
-PECAN = ./pecan-pico
-
-# List of all the Userlib files
-PECANSRC =  $(PECAN)/source/pkt/managers/pktradio.c \
-	    $(PECAN)/source/pkt/managers/pktservice.c
+PECAN = pecan-pico
 
 source = $(PECAN)/source
 
-# PKT
+# PKT library
 pkt = $(source)/pkt
 manager = $(pkt)/managers
 sys = $(pkt)/sys
@@ -19,8 +15,13 @@ channels = $(pkt)/channels
 decoders = $(pkt)/decoders
 diagnostics = $(pkt)/diagnostics
 
+# Packet
+packet = $(source)/protocols/packet
+
 # Drivers
 drivers = $(source)/drivers
+flash = $(drivers)/flash
+usb = $(drivers)/usb
 
 # Threads
 threads = $(source)/threads
@@ -48,4 +49,19 @@ PECANINC =  $(PECAN) \
 	    $(drivers) \
 	    $(rxtx) \
 	    $(config) \
-	    $(tools)
+	    $(tools) \
+	    $(packet) \
+	    $(flash) \
+	    $(usb) \
+
+# Source files to be compiled
+PECANSRC =  $(manager)/pktradio.c \
+	    $(manager)/pktservice.c \
+	    $(packet)/aprs.c \
+	    $(rxtx)/radio.c \
+	    $(PECAN)/portab.c \
+	    $(config)/config.c \
+	    $(aprs2)/ax25_pad.c \
+	    $(channels)/rxpwm.c \
+	    $(channels)/rxafsk.c \
+
