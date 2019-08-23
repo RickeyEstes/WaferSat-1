@@ -135,6 +135,7 @@ CSRC = $(STARTUPSRC) \
        $(CHIBIOS_CONTRIB)/os/various/devices_lib/lcd/ili9341.c \
 	   $(CHIBIOS)/os/various/syscalls.c \
        src/main.c \
+       src/wss_shell.c \
        src/log.c \
        src/dcmi_dma.c \
        src/camera/ov5640.c \

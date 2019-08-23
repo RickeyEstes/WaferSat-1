@@ -17,10 +17,13 @@
 #include "ch.h"
 #include "hal.h"
 #include "hal_sdc.h"
+#include "chprintf.h"
 #include "chevents.h"
 #include "string.h"
 #include "hal_fsmc_sdram.h"
+#include "log.h"
 #include "ff.h"
+#include "sd.h"
 
 #define SD_POLLING_INTERVAL 10
 #define SD_POLLING_DELAY 10
@@ -30,7 +33,8 @@
 
 static FATFS SDC_FS;
 
-static bool sd_fs_ready = FALSE; 
+bool sd_fs_ready = FALSE;
+bool sd_block_ready = FALSE;
 static int cnt = 0;
 static virtual_timer_t tmr;
 
@@ -48,16 +52,13 @@ static void sd_insert_handler(eventid_t id) {
 	  chprintf((BaseSequentialStream*) &SD1, "sd.c: Error connecting to SD card\n");
 	  return;
 	}
+	//We have a usable block device
+	sd_block_ready = TRUE;
 
 	err = f_mount(&SDC_FS, "/", 1);
 	if (err != FR_OK) {
-	    chprintf((BaseSequentialStream*) &SD1, "sd.c: SD card inserted but mount failed, error %d\n", err);
-
-#if HAL_USE_SDC
-		sdcDisconnect(&SDCD1);
-#else
-		mmcDisconnect(&MMCD1);
-#endif
+	    chprintf((BaseSequentialStream*) &SD1, "sd.c: SD card connected but mount failed, error %d\n", err);
+	    //leave device connected so shell could format, for example
 		return;
 	}
 
@@ -165,4 +166,19 @@ uint8_t sd_test(void) {
 	f_close(&f);
 	return FR_OK;
 }
- 
+
+void sd_mkfs(void)
+{
+	chprintf(&SD1, "Disk Status: %u\n", disk_status(1));
+	chprintf(&SD1, "Disk Init: %u\n", disk_initialize(1));
+	chprintf(&SD1, "Disk Status: %u\n", disk_status(1));
+
+
+	BYTE work[FF_MAX_SS];
+	FRESULT f;
+	//If we're building FATFS without multiple parititon support (as we
+	// currently are) then mkfs makes a suitable single-entry partition table
+	f = f_mkfs("/", FM_ANY, 0, work, sizeof work);
+
+	chprintf(&SD1, "Attempted to create filesystem; success %u\n", f);
+ }

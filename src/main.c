@@ -1,18 +1,18 @@
 /*
-    Copyright (C) 2013-2015 Andrea Zoppi
+ Copyright (C) 2013-2015 Andrea Zoppi
 
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
 
-        http://www.apache.org/licenses/LICENSE-2.0
+ http://www.apache.org/licenses/LICENSE-2.0
 
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-*/
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
 
 #include "ch.h"
 #include "hal.h"
@@ -28,23 +28,45 @@
 #include "pi2c.h"
 #include "sensors/common.h"
 #include "radio/si.h"
+#include "wss_shell.h"
 
-int main(void) {
+
+static const ShellConfig shell_cfg1 = {
+		(BaseSequentialStream *)&SD1, \
+			shell_commands };
+
+#define SHELL_THREAD_WA_SIZE 2048
+static THD_WORKING_AREA (shell_thread_wa, SHELL_THREAD_WA_SIZE);
+//static thread_t *logger_thread;
+static thread_t *shell_thread = NULL;
+
+
+int main(void)
+{
 	halInit();
 	chSysInit();
-	log_init();
-	sensor_init();
-	si_err_t error = si_init();
-	log_info("Initialized with err %u.", error);
 
-	while (true) {
-		log_data();
-		const char *test = "Hello world!";
-		si_tx(test, 12);
-		log_info("Transmitted with err %u.", error);
-		LED_OK();
-		chThdSleepMilliseconds(1000);
-		LED_CLEAR();
-		chThdSleepMilliseconds(1000);
+	log_init();
+
+	sensor_init();
+	sd_init();
+	shellInit();
+
+	while (TRUE)
+	{
+		if (shell_thread == NULL)
+		{
+			log_set_level(LOG_WARN);
+			shell_thread = chThdCreateStatic(shell_thread_wa, SHELL_THREAD_WA_SIZE,
+					NORMALPRIO, shellThread, (void*)(&shell_cfg1));
+		}
+		else if(chThdTerminatedX(shell_thread))
+		{
+			chThdRelease(shell_thread);
+			shell_thread = NULL;
+			log_set_level(LOG_TRACE);
+		}
+		//chEvtDispatch(evhndl, chEvtWaitOneTimeout(ALL_EVENTS, TIME_MS2I(500)));
+		chThdYield();
 	}
 }
