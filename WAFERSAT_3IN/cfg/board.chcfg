@@ -146,7 +146,7 @@
         Speed="Maximum"
         Resistor="Floating"
         Level="High"
-        Mode="Input"
+        Mode="Output"
         Alternate="0" />
     </GPIOA>
     <GPIOB>
@@ -231,13 +231,13 @@
         Mode="Alternate"
         Alternate="12" />
       <pin10
-        ID="UART3_TX"
+        ID="RADIO_GPIO1"
         Type="PushPull"
-        Speed="Minimum"
-        Resistor="PullUp"
-        Level="High"
-        Mode="Alternate"
-        Alternate="7" />
+        Speed="Maximum"
+        Resistor="PullDown"
+        Level="Low"
+        Mode="Input"
+        Alternate="0" />
       <pin11
         ID="UART3_RX"
         Type="PushPull"
@@ -507,9 +507,9 @@
         Mode="Alternate"
         Alternate="7" />
       <pin12
-        ID="UART3_RTS"
+        ID="RADIO_GPIO0"
         Type="PushPull"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="PullUp"
         Level="High"
         Mode="Alternate"
@@ -833,13 +833,13 @@
         Mode="Output"
         Alternate="0" />
       <pin4
-        ID="FMC_BA0"
+        ID="RADIO_SDN"
         Type="PushPull"
         Speed="Maximum"
-        Resistor="Floating"
+        Resistor="PullDown"
         Level="High"
-        Mode="Alternate"
-        Alternate="12" />
+        Mode="Output"
+        Alternate="0" />
       <pin5
         ID="FMC_BA1"
         Type="PushPull"
@@ -849,15 +849,15 @@
         Mode="Alternate"
         Alternate="12" />
       <pin6
-        ID="RADIO_GPIO1"
+        ID="OLD_RADIO_GPIO1"
         Type="PushPull"
         Speed="Minimum"
         Resistor="PullUp"
-        Level="High"
+        Level="Low"
         Mode="Input"
         Alternate="0" />
       <pin7
-        ID="RADIO_GPIO0"
+        ID="OLD_RADIO_GPIO0"
         Type="PushPull"
         Speed="Minimum"
         Resistor="PullUp"
@@ -903,7 +903,7 @@
         Resistor="Floating"
         Level="High"
         Mode="Alternate"
-        Alternate="5" ></pin12>
+        Alternate="5" />
       <pin13
         ID="SPI6_SCK"
         Type="PushPull"
@@ -919,7 +919,7 @@
         Resistor="Floating"
         Level="High"
         Mode="Alternate"
-        Alternate="5" ></pin14>
+        Alternate="5" />
       <pin15
         ID="FMC_SDNCAS"
         Type="PushPull"

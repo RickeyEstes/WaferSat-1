@@ -14,6 +14,7 @@
 #include "pkttypes.h"
 #include "ax25_pad.h"
 #include "types.h"
+#include "si_cfg.h"
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -221,6 +222,8 @@
 #define PHASE_DELTA_1200    (((2 * 1200) << 16) / PLAYBACK_RATE)    /* Delta-phase per sample for 1200Hz tone */
 #define PHASE_DELTA_2200    (((2 * 2200) << 16) / PLAYBACK_RATE)    /* Delta-phase per sample for 2200Hz tone */
 
+static const uint8_t SI_CFG[] = RADIO_CONFIGURATION_DATA_ARRAY;
+
 /*===========================================================================*/
 /* Module macros.                                                            */
 /*===========================================================================*/
@@ -341,6 +344,13 @@ extern "C" {
   const ICUConfig *Si446x_enablePWMevents(const radio_unit_t radio, palcallback_t cb);
   void Si446x_disablePWMevents(const radio_unit_t radio);
   uint8_t Si446x_readCCA(const radio_unit_t radio);
+  void Si446x_setRXState(const radio_unit_t radio, uint8_t chan);
+  uint8_t Si446x_getState(const radio_unit_t radio);
+  bool Si446x_read(const radio_unit_t radio, const uint8_t* txData, uint32_t txlen,
+                        uint8_t* rxData, uint32_t rxlen);
+  bool Si446x_readBoot(const radio_unit_t radio, const uint8_t* txData, uint32_t txlen,
+                        uint8_t* rxData, uint32_t rxlen);
+
 #ifdef __cplusplus
 }
 #endif

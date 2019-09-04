@@ -88,7 +88,7 @@
 #define GPIOB_DCMI_VSYNC            7U
 #define GPIOB_SD_D4                 8U
 #define GPIOB_SD_D5                 9U
-#define GPIOB_UART3_TX              10U
+#define GPIOB_RADIO_GPIO1           10U
 #define GPIOB_UART3_RX              11U
 #define GPIOB_OTG_HS_ID             12U
 #define GPIOB_OTG_HS_VBUS           13U
@@ -124,7 +124,7 @@
 #define GPIOD_FMC_D14               9U
 #define GPIOD_FMC_D15               10U
 #define GPIOD_UART3_CTS             11U
-#define GPIOD_UART3_RTS             12U
+#define GPIOD_RADIO_GPIO0           12U
 #define GPIOD_HEADER_PIND13         13U
 #define GPIOD_FMC_D0                14U
 #define GPIOD_FMC_D1                15U
@@ -167,10 +167,10 @@
 #define GPIOG_FMC_A11               1U
 #define GPIOG_FMC_A12               2U
 #define GPIOG_SPI1_CS1              3U
-#define GPIOG_FMC_BA0               4U
+#define GPIOG_RADIO_SDN             4U
 #define GPIOG_FMC_BA1               5U
-#define GPIOG_RADIO_GPIO1           6U
-#define GPIOG_RADIO_GPIO0           7U
+#define GPIOG_OLD_RADIO_GPIO1       6U
+#define GPIOG_OLD_RADIO_GPIO0       7U
 #define GPIOG_FMC_SDCLK             8U
 #define GPIOG_PIN9                  9U
 #define GPIOG_DCMI_D2               10U
@@ -243,7 +243,7 @@
 #define LINE_DCMI_VSYNC             PAL_LINE(GPIOB, 7U)
 #define LINE_SD_D4                  PAL_LINE(GPIOB, 8U)
 #define LINE_SD_D5                  PAL_LINE(GPIOB, 9U)
-#define LINE_RADIO_GPIO1	    PAL_LINE(GPIOB, 10U)
+#define LINE_RADIO_GPIO1            PAL_LINE(GPIOB, 10U)
 #define LINE_UART3_RX               PAL_LINE(GPIOB, 11U)
 #define LINE_OTG_HS_ID              PAL_LINE(GPIOB, 12U)
 #define LINE_OTG_HS_VBUS            PAL_LINE(GPIOB, 13U)
@@ -277,7 +277,7 @@
 #define LINE_FMC_D14                PAL_LINE(GPIOD, 9U)
 #define LINE_FMC_D15                PAL_LINE(GPIOD, 10U)
 #define LINE_UART3_CTS              PAL_LINE(GPIOD, 11U)
-#define LINE_RADIO_GPIO0	    PAL_LINE(GPIOD, 12U)
+#define LINE_RADIO_GPIO0            PAL_LINE(GPIOD, 12U)
 #define LINE_HEADER_PIND13          PAL_LINE(GPIOD, 13U)
 #define LINE_FMC_D0                 PAL_LINE(GPIOD, 14U)
 #define LINE_FMC_D1                 PAL_LINE(GPIOD, 15U)
@@ -317,8 +317,10 @@
 #define LINE_FMC_A11                PAL_LINE(GPIOG, 1U)
 #define LINE_FMC_A12                PAL_LINE(GPIOG, 2U)
 #define LINE_SPI1_CS1               PAL_LINE(GPIOG, 3U)
-#define LINE_FMC_BA0                PAL_LINE(GPIOG, 4U)
+#define LINE_RADIO_SDN              PAL_LINE(GPIOG, 4U)
 #define LINE_FMC_BA1                PAL_LINE(GPIOG, 5U)
+#define LINE_OLD_RADIO_GPIO1        PAL_LINE(GPIOG, 6U)
+#define LINE_OLD_RADIO_GPIO0        PAL_LINE(GPIOG, 7U)
 #define LINE_FMC_SDCLK              PAL_LINE(GPIOG, 8U)
 #define LINE_DCMI_D2                PAL_LINE(GPIOG, 10U)
 #define LINE_DCMI_D3                PAL_LINE(GPIOG, 11U)
@@ -332,7 +334,6 @@
 #define LINE_I2C2_SDA               PAL_LINE(GPIOH, 5U)
 #define LINE_DCMI_D0                PAL_LINE(GPIOH, 9U)
 #define LINE_DCMI_D1                PAL_LINE(GPIOH, 10U)
-#define LINE_RADIO_SDN		    PAL_LINE(GPIOH, 12U)
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
@@ -390,7 +391,7 @@
  * PA12 - UART1_RTS                 (alternate 7).
  * PA13 - SWDIO                     (alternate 0).
  * PA14 - SWCLK                     (alternate 0).
- * PA15 - SPI6_CS1                  (input floating).
+ * PA15 - SPI6_CS1                  (output pushpull maximum).
  */
 #define VAL_GPIOA_MODER             (PIN_MODE_ALTERNATE(GPIOA_UART4_TX) |   \
                                      PIN_MODE_ALTERNATE(GPIOA_UART4_RX) |   \
@@ -407,7 +408,7 @@
                                      PIN_MODE_ALTERNATE(GPIOA_UART1_RTS) |  \
                                      PIN_MODE_ALTERNATE(GPIOA_SWDIO) |      \
                                      PIN_MODE_ALTERNATE(GPIOA_SWCLK) |      \
-                                     PIN_MODE_INPUT(GPIOA_SPI6_CS1))
+                                     PIN_MODE_OUTPUT(GPIOA_SPI6_CS1))
 #define VAL_GPIOA_OTYPER            (PIN_OTYPE_PUSHPULL(GPIOA_UART4_TX) |   \
                                      PIN_OTYPE_PUSHPULL(GPIOA_UART4_RX) |   \
                                      PIN_OTYPE_PUSHPULL(GPIOA_UART2_GPS_TX) |\
@@ -502,7 +503,7 @@
  * PB7  - DCMI_VSYNC                (alternate 13).
  * PB8  - SD_D4                     (alternate 12).
  * PB9  - SD_D5                     (alternate 12).
- * PB10 - UART3_TX                  (alternate 7).
+ * PB10 - RADIO_GPIO1               (input pulldown).
  * PB11 - UART3_RX                  (alternate 7).
  * PB12 - OTG_HS_ID                 (alternate 12).
  * PB13 - OTG_HS_VBUS               (input pulldown).
@@ -519,7 +520,7 @@
                                      PIN_MODE_ALTERNATE(GPIOB_DCMI_VSYNC) | \
                                      PIN_MODE_ALTERNATE(GPIOB_SD_D4) |      \
                                      PIN_MODE_ALTERNATE(GPIOB_SD_D5) |      \
-                                     PIN_MODE_ALTERNATE(GPIOB_UART3_TX) |   \
+                                     PIN_MODE_INPUT(GPIOB_RADIO_GPIO1) |    \
                                      PIN_MODE_ALTERNATE(GPIOB_UART3_RX) |   \
                                      PIN_MODE_ALTERNATE(GPIOB_OTG_HS_ID) |  \
                                      PIN_MODE_INPUT(GPIOB_OTG_HS_VBUS) |    \
@@ -535,7 +536,7 @@
                                      PIN_OTYPE_PUSHPULL(GPIOB_DCMI_VSYNC) | \
                                      PIN_OTYPE_PUSHPULL(GPIOB_SD_D4) |      \
                                      PIN_OTYPE_PUSHPULL(GPIOB_SD_D5) |      \
-                                     PIN_OTYPE_PUSHPULL(GPIOB_UART3_TX) |   \
+                                     PIN_OTYPE_PUSHPULL(GPIOB_RADIO_GPIO1) |\
                                      PIN_OTYPE_PUSHPULL(GPIOB_UART3_RX) |   \
                                      PIN_OTYPE_PUSHPULL(GPIOB_OTG_HS_ID) |  \
                                      PIN_OTYPE_PUSHPULL(GPIOB_OTG_HS_VBUS) |\
@@ -551,7 +552,7 @@
                                      PIN_OSPEED_HIGH(GPIOB_DCMI_VSYNC) |    \
                                      PIN_OSPEED_HIGH(GPIOB_SD_D4) |         \
                                      PIN_OSPEED_HIGH(GPIOB_SD_D5) |         \
-                                     PIN_OSPEED_VERYLOW(GPIOB_UART3_TX) |   \
+                                     PIN_OSPEED_HIGH(GPIOB_RADIO_GPIO1) |   \
                                      PIN_OSPEED_VERYLOW(GPIOB_UART3_RX) |   \
                                      PIN_OSPEED_HIGH(GPIOB_OTG_HS_ID) |     \
                                      PIN_OSPEED_VERYLOW(GPIOB_OTG_HS_VBUS) |\
@@ -567,7 +568,7 @@
                                      PIN_PUPDR_PULLUP(GPIOB_DCMI_VSYNC) |   \
                                      PIN_PUPDR_FLOATING(GPIOB_SD_D4) |      \
                                      PIN_PUPDR_FLOATING(GPIOB_SD_D5) |      \
-                                     PIN_PUPDR_PULLUP(GPIOB_UART3_TX) |     \
+                                     PIN_PUPDR_PULLDOWN(GPIOB_RADIO_GPIO1) |\
                                      PIN_PUPDR_PULLUP(GPIOB_UART3_RX) |     \
                                      PIN_PUPDR_FLOATING(GPIOB_OTG_HS_ID) |  \
                                      PIN_PUPDR_PULLDOWN(GPIOB_OTG_HS_VBUS) |\
@@ -583,7 +584,7 @@
                                      PIN_ODR_HIGH(GPIOB_DCMI_VSYNC) |       \
                                      PIN_ODR_HIGH(GPIOB_SD_D4) |            \
                                      PIN_ODR_HIGH(GPIOB_SD_D5) |            \
-                                     PIN_ODR_HIGH(GPIOB_UART3_TX) |         \
+                                     PIN_ODR_LOW(GPIOB_RADIO_GPIO1) |       \
                                      PIN_ODR_HIGH(GPIOB_UART3_RX) |         \
                                      PIN_ODR_HIGH(GPIOB_OTG_HS_ID) |        \
                                      PIN_ODR_HIGH(GPIOB_OTG_HS_VBUS) |      \
@@ -599,7 +600,7 @@
                                      PIN_AFIO_AF(GPIOB_DCMI_VSYNC, 13U))
 #define VAL_GPIOB_AFRH              (PIN_AFIO_AF(GPIOB_SD_D4, 12U) |        \
                                      PIN_AFIO_AF(GPIOB_SD_D5, 12U) |        \
-                                     PIN_AFIO_AF(GPIOB_UART3_TX, 7U) |      \
+                                     PIN_AFIO_AF(GPIOB_RADIO_GPIO1, 0U) |   \
                                      PIN_AFIO_AF(GPIOB_UART3_RX, 7U) |      \
                                      PIN_AFIO_AF(GPIOB_OTG_HS_ID, 12U) |    \
                                      PIN_AFIO_AF(GPIOB_OTG_HS_VBUS, 0U) |   \
@@ -738,7 +739,7 @@
  * PD9  - FMC_D14                   (alternate 12).
  * PD10 - FMC_D15                   (alternate 12).
  * PD11 - UART3_CTS                 (alternate 7).
- * PD12 - UART3_RTS                 (alternate 7).
+ * PD12 - RADIO_GPIO0               (alternate 7).
  * PD13 - HEADER_PIND13             (input pullup).
  * PD14 - FMC_D0                    (alternate 12).
  * PD15 - FMC_D1                    (alternate 12).
@@ -755,7 +756,7 @@
                                      PIN_MODE_ALTERNATE(GPIOD_FMC_D14) |    \
                                      PIN_MODE_ALTERNATE(GPIOD_FMC_D15) |    \
                                      PIN_MODE_ALTERNATE(GPIOD_UART3_CTS) |  \
-                                     PIN_MODE_ALTERNATE(GPIOD_UART3_RTS) |  \
+                                     PIN_MODE_ALTERNATE(GPIOD_RADIO_GPIO0) |\
                                      PIN_MODE_INPUT(GPIOD_HEADER_PIND13) |  \
                                      PIN_MODE_ALTERNATE(GPIOD_FMC_D0) |     \
                                      PIN_MODE_ALTERNATE(GPIOD_FMC_D1))
@@ -771,7 +772,7 @@
                                      PIN_OTYPE_PUSHPULL(GPIOD_FMC_D14) |    \
                                      PIN_OTYPE_PUSHPULL(GPIOD_FMC_D15) |    \
                                      PIN_OTYPE_PUSHPULL(GPIOD_UART3_CTS) |  \
-                                     PIN_OTYPE_PUSHPULL(GPIOD_UART3_RTS) |  \
+                                     PIN_OTYPE_PUSHPULL(GPIOD_RADIO_GPIO0) |\
                                      PIN_OTYPE_PUSHPULL(GPIOD_HEADER_PIND13) |\
                                      PIN_OTYPE_PUSHPULL(GPIOD_FMC_D0) |     \
                                      PIN_OTYPE_PUSHPULL(GPIOD_FMC_D1))
@@ -787,7 +788,7 @@
                                      PIN_OSPEED_HIGH(GPIOD_FMC_D14) |       \
                                      PIN_OSPEED_HIGH(GPIOD_FMC_D15) |       \
                                      PIN_OSPEED_VERYLOW(GPIOD_UART3_CTS) |  \
-                                     PIN_OSPEED_VERYLOW(GPIOD_UART3_RTS) |  \
+                                     PIN_OSPEED_HIGH(GPIOD_RADIO_GPIO0) |   \
                                      PIN_OSPEED_VERYLOW(GPIOD_HEADER_PIND13) |\
                                      PIN_OSPEED_HIGH(GPIOD_FMC_D0) |        \
                                      PIN_OSPEED_HIGH(GPIOD_FMC_D1))
@@ -803,7 +804,7 @@
                                      PIN_PUPDR_FLOATING(GPIOD_FMC_D14) |    \
                                      PIN_PUPDR_FLOATING(GPIOD_FMC_D15) |    \
                                      PIN_PUPDR_PULLUP(GPIOD_UART3_CTS) |    \
-                                     PIN_PUPDR_PULLUP(GPIOD_UART3_RTS) |    \
+                                     PIN_PUPDR_PULLUP(GPIOD_RADIO_GPIO0) |  \
                                      PIN_PUPDR_PULLUP(GPIOD_HEADER_PIND13) |\
                                      PIN_PUPDR_FLOATING(GPIOD_FMC_D0) |     \
                                      PIN_PUPDR_FLOATING(GPIOD_FMC_D1))
@@ -819,7 +820,7 @@
                                      PIN_ODR_HIGH(GPIOD_FMC_D14) |          \
                                      PIN_ODR_HIGH(GPIOD_FMC_D15) |          \
                                      PIN_ODR_HIGH(GPIOD_UART3_CTS) |        \
-                                     PIN_ODR_HIGH(GPIOD_UART3_RTS) |        \
+                                     PIN_ODR_HIGH(GPIOD_RADIO_GPIO0) |      \
                                      PIN_ODR_HIGH(GPIOD_HEADER_PIND13) |    \
                                      PIN_ODR_HIGH(GPIOD_FMC_D0) |           \
                                      PIN_ODR_HIGH(GPIOD_FMC_D1))
@@ -835,7 +836,7 @@
                                      PIN_AFIO_AF(GPIOD_FMC_D14, 12U) |      \
                                      PIN_AFIO_AF(GPIOD_FMC_D15, 12U) |      \
                                      PIN_AFIO_AF(GPIOD_UART3_CTS, 7U) |     \
-                                     PIN_AFIO_AF(GPIOD_UART3_RTS, 7U) |     \
+                                     PIN_AFIO_AF(GPIOD_RADIO_GPIO0, 7U) |   \
                                      PIN_AFIO_AF(GPIOD_HEADER_PIND13, 0U) | \
                                      PIN_AFIO_AF(GPIOD_FMC_D0, 12U) |       \
                                      PIN_AFIO_AF(GPIOD_FMC_D1, 12U))
@@ -1081,10 +1082,10 @@
  * PG1  - FMC_A11                   (alternate 12).
  * PG2  - FMC_A12                   (alternate 12).
  * PG3  - SPI1_CS1                  (output pushpull maximum).
- * PG4  - FMC_BA0                   (alternate 12).
+ * PG4  - RADIO_SDN                 (output pushpull maximum).
  * PG5  - FMC_BA1                   (alternate 12).
- * PG6  - RADIO_GPIO1               (input pullup).
- * PG7  - RADIO_GPIO0               (input pullup).
+ * PG6  - OLD_RADIO_GPIO1           (input pullup).
+ * PG7  - OLD_RADIO_GPIO0           (input pullup).
  * PG8  - FMC_SDCLK                 (alternate 12).
  * PG9  - PIN9                      (input pullup).
  * PG10 - DCMI_D2                   (alternate 13).
@@ -1098,10 +1099,10 @@
                                      PIN_MODE_ALTERNATE(GPIOG_FMC_A11) |    \
                                      PIN_MODE_ALTERNATE(GPIOG_FMC_A12) |    \
                                      PIN_MODE_OUTPUT(GPIOG_SPI1_CS1) |      \
-                                     PIN_MODE_ALTERNATE(GPIOG_FMC_BA0) |    \
+                                     PIN_MODE_OUTPUT(GPIOG_RADIO_SDN) |     \
                                      PIN_MODE_ALTERNATE(GPIOG_FMC_BA1) |    \
-                                     PIN_MODE_INPUT(GPIOG_RADIO_GPIO1) |    \
-                                     PIN_MODE_INPUT(GPIOG_RADIO_GPIO0) |    \
+                                     PIN_MODE_INPUT(GPIOG_OLD_RADIO_GPIO1) |\
+                                     PIN_MODE_INPUT(GPIOG_OLD_RADIO_GPIO0) |\
                                      PIN_MODE_ALTERNATE(GPIOG_FMC_SDCLK) |  \
                                      PIN_MODE_INPUT(GPIOG_PIN9) |           \
                                      PIN_MODE_ALTERNATE(GPIOG_DCMI_D2) |    \
@@ -1114,10 +1115,10 @@
                                      PIN_OTYPE_PUSHPULL(GPIOG_FMC_A11) |    \
                                      PIN_OTYPE_PUSHPULL(GPIOG_FMC_A12) |    \
                                      PIN_OTYPE_PUSHPULL(GPIOG_SPI1_CS1) |   \
-                                     PIN_OTYPE_PUSHPULL(GPIOG_FMC_BA0) |    \
+                                     PIN_OTYPE_PUSHPULL(GPIOG_RADIO_SDN) |  \
                                      PIN_OTYPE_PUSHPULL(GPIOG_FMC_BA1) |    \
-                                     PIN_OTYPE_PUSHPULL(GPIOG_RADIO_GPIO1) |\
-                                     PIN_OTYPE_PUSHPULL(GPIOG_RADIO_GPIO0) |\
+                                     PIN_OTYPE_PUSHPULL(GPIOG_OLD_RADIO_GPIO1) |\
+                                     PIN_OTYPE_PUSHPULL(GPIOG_OLD_RADIO_GPIO0) |\
                                      PIN_OTYPE_PUSHPULL(GPIOG_FMC_SDCLK) |  \
                                      PIN_OTYPE_PUSHPULL(GPIOG_PIN9) |       \
                                      PIN_OTYPE_PUSHPULL(GPIOG_DCMI_D2) |    \
@@ -1130,10 +1131,10 @@
                                      PIN_OSPEED_HIGH(GPIOG_FMC_A11) |       \
                                      PIN_OSPEED_HIGH(GPIOG_FMC_A12) |       \
                                      PIN_OSPEED_HIGH(GPIOG_SPI1_CS1) |      \
-                                     PIN_OSPEED_HIGH(GPIOG_FMC_BA0) |       \
+                                     PIN_OSPEED_HIGH(GPIOG_RADIO_SDN) |     \
                                      PIN_OSPEED_HIGH(GPIOG_FMC_BA1) |       \
-                                     PIN_OSPEED_VERYLOW(GPIOG_RADIO_GPIO1) |\
-                                     PIN_OSPEED_VERYLOW(GPIOG_RADIO_GPIO0) |\
+                                     PIN_OSPEED_VERYLOW(GPIOG_OLD_RADIO_GPIO1) |\
+                                     PIN_OSPEED_VERYLOW(GPIOG_OLD_RADIO_GPIO0) |\
                                      PIN_OSPEED_HIGH(GPIOG_FMC_SDCLK) |     \
                                      PIN_OSPEED_HIGH(GPIOG_PIN9) |          \
                                      PIN_OSPEED_HIGH(GPIOG_DCMI_D2) |       \
@@ -1146,10 +1147,10 @@
                                      PIN_PUPDR_FLOATING(GPIOG_FMC_A11) |    \
                                      PIN_PUPDR_FLOATING(GPIOG_FMC_A12) |    \
                                      PIN_PUPDR_FLOATING(GPIOG_SPI1_CS1) |   \
-                                     PIN_PUPDR_FLOATING(GPIOG_FMC_BA0) |    \
+                                     PIN_PUPDR_PULLDOWN(GPIOG_RADIO_SDN) |  \
                                      PIN_PUPDR_FLOATING(GPIOG_FMC_BA1) |    \
-                                     PIN_PUPDR_PULLUP(GPIOG_RADIO_GPIO1) |  \
-                                     PIN_PUPDR_PULLUP(GPIOG_RADIO_GPIO0) |  \
+                                     PIN_PUPDR_PULLUP(GPIOG_OLD_RADIO_GPIO1) |\
+                                     PIN_PUPDR_PULLUP(GPIOG_OLD_RADIO_GPIO0) |\
                                      PIN_PUPDR_FLOATING(GPIOG_FMC_SDCLK) |  \
                                      PIN_PUPDR_PULLUP(GPIOG_PIN9) |         \
                                      PIN_PUPDR_PULLUP(GPIOG_DCMI_D2) |      \
@@ -1162,10 +1163,10 @@
                                      PIN_ODR_HIGH(GPIOG_FMC_A11) |          \
                                      PIN_ODR_HIGH(GPIOG_FMC_A12) |          \
                                      PIN_ODR_LOW(GPIOG_SPI1_CS1) |          \
-                                     PIN_ODR_HIGH(GPIOG_FMC_BA0) |          \
+                                     PIN_ODR_HIGH(GPIOG_RADIO_SDN) |        \
                                      PIN_ODR_HIGH(GPIOG_FMC_BA1) |          \
-                                     PIN_ODR_HIGH(GPIOG_RADIO_GPIO1) |      \
-                                     PIN_ODR_HIGH(GPIOG_RADIO_GPIO0) |      \
+                                     PIN_ODR_LOW(GPIOG_OLD_RADIO_GPIO1) |   \
+                                     PIN_ODR_HIGH(GPIOG_OLD_RADIO_GPIO0) |  \
                                      PIN_ODR_HIGH(GPIOG_FMC_SDCLK) |        \
                                      PIN_ODR_HIGH(GPIOG_PIN9) |             \
                                      PIN_ODR_HIGH(GPIOG_DCMI_D2) |          \
@@ -1178,10 +1179,10 @@
                                      PIN_AFIO_AF(GPIOG_FMC_A11, 12U) |      \
                                      PIN_AFIO_AF(GPIOG_FMC_A12, 12U) |      \
                                      PIN_AFIO_AF(GPIOG_SPI1_CS1, 0U) |      \
-                                     PIN_AFIO_AF(GPIOG_FMC_BA0, 12U) |      \
+                                     PIN_AFIO_AF(GPIOG_RADIO_SDN, 0U) |     \
                                      PIN_AFIO_AF(GPIOG_FMC_BA1, 12U) |      \
-                                     PIN_AFIO_AF(GPIOG_RADIO_GPIO1, 0U) |   \
-                                     PIN_AFIO_AF(GPIOG_RADIO_GPIO0, 0U))
+                                     PIN_AFIO_AF(GPIOG_OLD_RADIO_GPIO1, 0U) |\
+                                     PIN_AFIO_AF(GPIOG_OLD_RADIO_GPIO0, 0U))
 #define VAL_GPIOG_AFRH              (PIN_AFIO_AF(GPIOG_FMC_SDCLK, 12U) |    \
                                      PIN_AFIO_AF(GPIOG_PIN9, 0U) |          \
                                      PIN_AFIO_AF(GPIOG_DCMI_D2, 13U) |      \

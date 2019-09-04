@@ -168,8 +168,7 @@ bool transmitOnRadio(packet_t pp, const radio_freq_t base_freq,
 
     rt.handler = handler;
     rt.command = PKT_RADIO_TX_SEND;
-    rt.type = mod;
-    rt.base_frequency = op_freq;
+    rt.type = mod; rt.base_frequency = op_freq;
     rt.step_hz = step;
     rt.channel = chan;
     rt.tx_power = pwr;
@@ -200,4 +199,8 @@ bool transmitOnRadio(packet_t pp, const radio_freq_t base_freq,
   return true;
 }
 
+const char *getModulation(uint8_t key) {
+    const char *val[] = {"NONE", "AFSK", "2FSK"};
+    return val[key];
+};
 

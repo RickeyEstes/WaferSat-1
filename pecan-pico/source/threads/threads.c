@@ -33,13 +33,13 @@ void start_user_threads(void) {
 	if(conf_sram.pos_sec.beacon.active)
 	  start_beacon_thread(&conf_sram.pos_sec, "POS2");
 
-	if(conf_sram.img_pri.svc_conf.active)
+	/*if(conf_sram.img_pri.svc_conf.active)
 	  start_image_thread(&conf_sram.img_pri);
 	if(conf_sram.img_sec.svc_conf.active)
 	  start_image_thread(&conf_sram.img_sec);
 
 	if(conf_sram.log.svc_conf.active)
-	  start_logging_thread(&conf_sram.log);
+	  start_logging_thread(&conf_sram.log);*/
 
     if(conf_sram.aprs.rx.svc_conf.active
         && conf_sram.aprs.digi

@@ -83,6 +83,7 @@ THD_FUNCTION(pktRadioManager, arg) {
   chMsgRelease(initiator, MSG_OK);
   /* Run until close request and no outstanding TX tasks. */
   while(true) {
+    TRACE_INFO("Received task object");
     /* Check for task requests. */
     radio_task_object_t *task_object;
     (void)chFifoReceiveObjectTimeout(radio_queue,
@@ -146,6 +147,7 @@ THD_FUNCTION(pktRadioManager, arg) {
           handler->link_controller = driver;
           /* If AFSK start failed send event but leave managers running. */
           if(driver == NULL) {
+	    TRACE_ERROR("AFSK Failed");
             pktAddEventFlags(handler, (EVT_AFSK_START_FAIL));
             break;
           }

@@ -33,6 +33,11 @@ config = $(source)/config
 # Tools
 tools = $(source)/tools
 
+# CMSIS library
+math = $(PECAN)/CMSIS/DSP
+
+mathfiles = $(wildcard $(math)/*/*.c)
+
 # Required include directories
 PECANINC =  $(PECAN) \
 	    $(PECAN)/CMSIS/include/ \
@@ -55,7 +60,8 @@ PECANINC =  $(PECAN) \
 	    $(usb) \
 
 # Source files to be compiled
-PECANSRC =  $(manager)/pktradio.c \
+PECANSRC =  $(mathfiles) \
+	    $(manager)/pktradio.c \
 	    $(manager)/pktservice.c \
 	    $(packet)/aprs.c \
 	    $(rxtx)/radio.c \
@@ -64,4 +70,13 @@ PECANSRC =  $(manager)/pktradio.c \
 	    $(aprs2)/ax25_pad.c \
 	    $(channels)/rxpwm.c \
 	    $(channels)/rxafsk.c \
-
+	    $(drivers)/si446x.c \
+	    $(threads)/threads.c \
+	    $(protocols)/txhdlc.c \
+	    $(protocols)/rxhdlc.c \
+	    $(protocols)/crc_calc.c \
+	    $(diagnostics)/ax25_dump.c \
+	    $(filters)/dsp.c \
+	    $(decoders)/corr_q31.c \
+	    $(filters)/firfilter_q31.c \
+	    $(usb)/debug.c

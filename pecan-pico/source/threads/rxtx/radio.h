@@ -25,10 +25,7 @@ bool transmitOnRadio(packet_t pp, radio_freq_t freq, channel_hz_t step,
                      radio_ch_t chan, radio_pwr_t pwr, mod_t mod,
                      radio_squelch_t rssi);
 
-inline const char *getModulation(uint8_t key) {
-    const char *val[] = {"NONE", "AFSK", "2FSK"};
-    return val[key];
-};
-
+// TODO Was inline; shouldn't ruin performance
+const char *getModulation(uint8_t key);
 #endif /* __RADIO_H__ */
 

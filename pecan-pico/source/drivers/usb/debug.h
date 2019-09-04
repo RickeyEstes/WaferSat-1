@@ -7,11 +7,12 @@
 #include "ptime.h"
 #include "config.h"
 #include <string.h>
-#include "usbcfg.h"
-#include "usb.h"
 
+#define SD_console		SD1
 #define ERROR_LIST_LENGTH	64
 #define ERROR_LIST_SIZE		32
+#define TRACE_TIME	    FALSE
+#define TRACE_FILE	    FALSE
 
 #define __FILENAME__ (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
 
@@ -19,19 +20,22 @@ extern char error_list[ERROR_LIST_SIZE][ERROR_LIST_LENGTH];
 extern uint8_t error_counter;
 extern uint8_t usb_trace_level;
 
-#define TRACE_DEBUG(format, args...) if(usb_trace_level > 4) { debug_print("DEBUG", __FILENAME__, __LINE__, format, ##args); }
-#define TRACE_INFO(format, args...)  if(usb_trace_level > 3) { debug_print("     ", __FILENAME__, __LINE__, format, ##args); }
-#define TRACE_MON(format, args...)  if(usb_trace_level > 2) { debug_print("     ", __FILENAME__, __LINE__, format, ##args); }
-#define TRACE_WARN(format, args...)  if(usb_trace_level > 1) { debug_print("WARN ", __FILENAME__, __LINE__, format, ##args); }
-#define TRACE_ERROR(format, args...) { \
+#define TRACE_DEBUG(...) do { if(usb_trace_level > 4) { debug_print("DEBUG", __FILE__, __LINE__, \
+    __VA_ARGS__); } } while(0)
+#define TRACE_INFO(...) do { if(usb_trace_level > 3) { debug_print("     ", __FILE__, __LINE__, \
+    __VA_ARGS__); } } while(0)
+#define TRACE_MON(...)  do { if(usb_trace_level > 2) { debug_print("     ", __FILE__, __LINE__, \
+    __VA_ARGS__ ); } } while(0)
+#define TRACE_WARN(...)  do { if(usb_trace_level > 1) { debug_print("WARN ", __FILE__, __LINE__, __VA_ARGS__); } } while(0)
+#define TRACE_ERROR(...) do { \
 	if(usb_trace_level > 0) { \
-		debug_print("ERROR", __FILENAME__, __LINE__, format, ##args); \
+		debug_print("ERROR", __FILE__, __LINE__, __VA_ARGS__); \
 	} \
 	\
 	uint8_t strcnt = chsnprintf(error_list[error_counter], ERROR_LIST_LENGTH, "[%8d.%03d] ", chVTGetSystemTime()/CH_CFG_ST_FREQUENCY, (chVTGetSystemTime()*1000/CH_CFG_ST_FREQUENCY)%1000); \
-	chsnprintf(&error_list[error_counter][strcnt], ERROR_LIST_LENGTH-strcnt, (format), ##args); \
+	chsnprintf(&error_list[error_counter][strcnt], ERROR_LIST_LENGTH-strcnt, __VA_ARGS__); \
 	error_counter = (error_counter+1)%ERROR_LIST_SIZE; \
-}
+} while(0)
 
 #if TRACE_TIME && TRACE_FILE
 #define TRACE_TAB "                                               "

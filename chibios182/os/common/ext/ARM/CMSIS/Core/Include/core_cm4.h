@@ -99,6 +99,7 @@
 
 #elif defined ( __GNUC__ )
   #if defined (__VFP_FP__) && !defined(__SOFTFP__)
+    #define __FPU_PRESENT	1U	// Minor hack to allow compilation, only allowable since we are an f4
     #if defined (__FPU_PRESENT) && (__FPU_PRESENT == 1U)
       #define __FPU_USED       1U
     #else

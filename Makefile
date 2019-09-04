@@ -1,3 +1,4 @@
+
 ##############################################################################
 # Build global options
 # NOTE: Can be overridden externally.
@@ -5,6 +6,7 @@
 
 # Compiler options here.
 ifeq ($(USE_OPT),)
+  # TODO Change to -O2 for production
   USE_OPT = -O2 -ggdb -fomit-frame-pointer -falign-functions=16 \
   -DCHPRINTF_USE_FLOAT=1
 endif
@@ -58,6 +60,13 @@ endif
 # Architecture or project specific options
 #
 
+# Enables the use of FPU (no, softfp, hard).
+ifeq ($(USE_FPU),)
+  USE_FPU = hard
+  USE_FPU_OPT = -mfloat-abi=$(USE_FPU) \
+   -mfpu=fpv4-sp-d16 -fsingle-precision-constant
+endif
+
 # Stack size to be allocated to the Cortex-M process stack. This stack is
 # the stack used by the main() thread.
 ifeq ($(USE_PROCESS_STACKSIZE),)
@@ -68,13 +77,6 @@ endif
 # stack is used for processing interrupts and exceptions.
 ifeq ($(USE_EXCEPTIONS_STACKSIZE),)
   USE_EXCEPTIONS_STACKSIZE = 0x5000
-endif
-
-# Enables the use of FPU on Cortex-M4 (no, softfp, hard).
-ifeq ($(USE_FPU),)
-  USE_FPU = hard
-  USE_FPU_OPT = -mfloat-abi=$(USE_FPU) \
-   -mfpu=fpv4-sp-d16 -fsingle-precision-constant
 endif
 
 #
@@ -144,7 +146,6 @@ CSRC = $(STARTUPSRC) \
        collector.c \
        ptime.c \
        watchdog.c \
-       debug.c \
        padc.c \
        ltr329.c \
        tmp100.c \
@@ -243,7 +244,7 @@ UDEFS = -DARM_MATH_CM4
 
 
 # Define ASM defines here
-UADEFS =
+UADEFS = -D__FPU_PRESENT=1
 
 # List all user directories here
 UINCDIR = 
@@ -252,7 +253,7 @@ UINCDIR =
 ULIBDIR =
 
 # List all user libraries here
-ULIBS =
+ULIBS = -lm
 
 #
 # End of user defines
@@ -260,3 +261,6 @@ ULIBS =
 
 RULESPATH = $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC
 include $(RULESPATH)/rules.mk
+
+print-%  : ; @echo $* = $($*)
+
