@@ -1,0 +1,69 @@
+#ifndef MOTOR_H
+#define MOTOR_H
+
+#include "ch.h"
+#include "hal.h"
+
+typedef enum MotorState {
+	DISABLED,	    // In low power mode
+	CLOCKWISE,	    // Actively turning clockwise
+	COUNTER-CLOCKWISE,  // Actively turning counter-clockwise
+	ACTIVE_BRAKE,	    // Actively stopping the motor
+	IDLE		    // No work being put into motor, but PWM is enabled 
+} MotorState; 
+
+typedef struct Motor {
+	/*
+	 *  A pointer to the pwm driver
+	 */
+	PWMDriver *pwmd;
+
+	/*
+	 *  Uniquely identifies the motor, since multiple motors should share 
+	 *  the same pwm driver
+	 */
+	pwmchannel_t channel;		
+
+	/*
+	 *  References the line outputting a PWM signal to the motor (controlling power)
+	 */
+	ioline_t pwm;
+
+	/*
+	 *  References the CLOCKWISE line on the H Bridge controlling the motor's direction
+	 */
+	ioline_t cw;			
+
+	/*
+	 *  References the COUNTER-CLOCKWISE line on the H Bridge controlling the motor's direction
+	 */
+	ioline_t ccw;			
+
+	/*
+	 *  Stores the absolute value of the last power value assigned to the motor
+	 */
+	int power;
+	
+	/*
+	 * Represents the current state of the motor
+	 */
+	MotorState state;			
+} Motor;
+
+void motor_init(Motor *m, PWMDriver *pwmd, pwmchannel_t channel, ioline_t pwm,
+    ioline_t cw, ioline_t ccw, const PWMConfig *pwmc);
+
+int motor_start(Motor *m, int power);
+
+int motor_brake(Motor *m);
+
+int motor_idle(Motor *m);
+
+int motor_stop(Motor *m);
+
+int motor_getPower(Motor *m);
+
+bool motor_getDirection(Motor *m);
+
+
+#endif  // MOTOR_H
