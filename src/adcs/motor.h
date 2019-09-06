@@ -5,12 +5,20 @@
 #include "hal.h"
 
 typedef enum MotorState {
-	DISABLED,	    // In low power mode
-	CLOCKWISE,	    // Actively turning clockwise
-	COUNTER-CLOCKWISE,  // Actively turning counter-clockwise
-	ACTIVE_BRAKE,	    // Actively stopping the motor
-	IDLE		    // No work being put into motor, but PWM is enabled 
+	UNINIT,			// Motor has not yet been initialized
+	DISABLED,		// In low power mode
+	CLOCKWISE,	    	// Actively turning clockwise
+	COUNTER-CLOCKWISE,  	// Actively turning counter-clockwise
+	ACTIVE_BRAKE,	    	// Actively stopping the motor
+	IDLE		    	// No work being put into motor, but PWM is enabled 
 } MotorState; 
+
+typedef enum MotorErr {
+	MOTOR_OK,
+	MOTOR_STATE_ERR,	// Motor is not in a valid state to perform 
+				// the desired operation
+	MOTOR_INPUT_ERR		// Motor operation was given an invalid input
+} MotorErr;
 
 typedef struct Motor {
 	/*
@@ -22,25 +30,33 @@ typedef struct Motor {
 	 *  Uniquely identifies the motor, since multiple motors should share 
 	 *  the same pwm driver
 	 */
-	pwmchannel_t channel;		
+	pwmchannel_t channel;	
 
 	/*
-	 *  References the line outputting a PWM signal to the motor (controlling power)
+	 *  References the line outputting a PWM signal to the 
+	 *  motor (controlling power)
 	 */
 	ioline_t pwm;
 
 	/*
-	 *  References the CLOCKWISE line on the H Bridge controlling the motor's direction
+	 *  References the CLOCKWISE line on the H Bridge controlling the 
+	 *  motor's direction
 	 */
-	ioline_t cw;			
+	ioline_t cw;
 
 	/*
-	 *  References the COUNTER-CLOCKWISE line on the H Bridge controlling the motor's direction
+	 *  References the COUNTER-CLOCKWISE line on the H Bridge controlling 
+	 *  the motor's direction
 	 */
-	ioline_t ccw;			
+	ioline_t ccw;
 
 	/*
-	 *  Stores the absolute value of the last power value assigned to the motor
+	 *  Enables/Disables the H Bridge (active low)
+	 */
+	ioline_t sleep;
+	/*
+	 *  Stores the absolute value of the last power value assigned 
+	 *  to the motor
 	 */
 	int power;
 	
