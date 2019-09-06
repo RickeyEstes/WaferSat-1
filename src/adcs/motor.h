@@ -58,7 +58,7 @@ typedef struct Motor {
 	 *  Stores the absolute value of the last power value assigned 
 	 *  to the motor
 	 */
-	int power;
+	int power;			/// TODO Necessary?
 	
 	/*
 	 * Represents the current state of the motor
@@ -69,11 +69,13 @@ typedef struct Motor {
 void motor_init(Motor *m, PWMDriver *pwmd, pwmchannel_t channel, ioline_t pwm,
     ioline_t cw, ioline_t ccw, const PWMConfig *pwmc);
 
-int motor_start(Motor *m, int power);
+int motor_startCW(Motor *m, int power);
+
+int motor_startCCW(Motor *m, int power);
 
 int motor_brake(Motor *m);
 
-int motor_idle(Motor *m);
+int motor_ready(Motor *m);
 
 int motor_stop(Motor *m);
 

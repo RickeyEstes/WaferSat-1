@@ -56,54 +56,116 @@ void motor_init(Motor *m, PWMDriver *pwmd, pwmchannel_t channel, ioline_t pwm,
 }
 
 /**
- * @brief		Start the motor or change speed to the given power (converted to duty cycle for PWM)
+ * @brief		Start motor going clockwise at the given power 
+ *			(converted to duty cycle for PWM)
+ *
+ * @pre			Motor is either already turning clockwise or in its idle state
  *
  * @param m	    	Pointer to a Motor object
- * @param power		Ranges from -10000 to 10000, as a percentage of the maximum duty cycle
- *			 - 4750 -> 47.5%; -10000 -> 100%, reversed
+ * @param power		Ranges from 0 to 10000, as a percentage of the maximum duty cycle
+ *			 - 4750 -> 47.5%; -10000 -> 100%
  * @return		Error state 
  *			 - Returns an input error if power exceeds allotted range
  *			 - Returns a state error if motor is not in the idle
  *			   state
  */
-int motor_start(Motor *m, int power) {
-	if(m->state != IDLE) {
-		log_error("Motor must be in an idle state before being driven");
+MotorErr motor_startCW(Motor *m, uint16_t power) {
+	if(!(m->state == IDLE || m->state == CLOCKWISE)) {
+		log_error("Motor must already be turning clockwise or idle before being driven");
+		return MOTOR_STATE_ERROR;
 	}
 
-	if(abs(power) > 10000) {
+	if(power > 10000 || power < 0) {
+		log_error("Input power exceeds range");
 		return MOTOR_INPUT_ERR;
 	}
 
-	// TODO Change motor direction based on power	
+	// Change motor direction
+	palClearLine(m->ccw);
+	palSetLine(m->cw);
 
 	// Sends pwm signals
 	pwmEnableChannel(m->pwmd, m->channel, PWM_PERCENTAGE_TO_WIDTH(m->pwmd, abs(power)));
 
 	// Updates motor object state 
-	// TODO Change motor state field
 	m->power = abs(power);	
-	m->dir = power > 0;
+	m->state = CLOCKWISE;
 	
-	return 0;
+	return MOTOR_OK;
+}
+
+// DESIGN NOTE: Separate from startCW to enforce state changes
+/**
+ * @brief		Start motor going counter-clockwise at the given power 
+ *			(converted to duty cycle for PWM)
+ *
+ * @pre			Motor is either already turning counter-clockwise or in its idle state
+ *
+ * @param m	    	Pointer to a Motor object
+ * @param power		Ranges from 0 to 10000, as a percentage of the maximum duty cycle
+ *			 - 4750 -> 47.5%; -10000 -> 100%
+ * @return		Error state 
+ *			 - Returns an input error if power exceeds allotted range
+ *			 - Returns a state error if motor is not in the idle
+ *			   state
+ */
+MotorErr motor_startCCW(Motor *m, uint16_t power) {
+	if(!(m->state == IDLE || m->state == COUNTER_CLOCKWISE)) {
+		log_error("Motor must already be turning counter-clockwise or idle before being driven");
+		return MOTOR_STATE_ERROR;
+	}
+
+	if(power > 10000 || power < 0) {
+		log_error("Input power exceeds range");
+		return MOTOR_INPUT_ERR;
+	}
+
+	// Change motor direction
+	palClearLine(m->cw);
+	palSetLine(m->ccw);
+
+	// Sends pwm signals
+	pwmEnableChannel(m->pwmd, m->channel, PWM_PERCENTAGE_TO_WIDTH(m->pwmd, abs(power)));
+
+	// Updates motor object state 
+	m->power = abs(power);	
+	m->state = COUNTER_CLOCKWISE;
+	
+	return MOTOR_OK;
 }
 
 /**
- * @brief		Put the motor into its idle state.
- * @note		This prepares the motor for active driving. 
+ * @brief		Start actively braking the motor
+ *
+ * @pre			Motor is in its idle state
  *
  * @param m		Pointer to a Motor object
+ * @return		Error state
  */
-MotorErr motor_idle(Motor *m) {
-	if(motor->state = UNINIT) {
-		
+MotorErr motor_brake(Motor *m) {
+	if(!(m->state == IDLE || m->state == ACTIVE_BRAKE)) {
+		log_error("Motor must be in its idle state before braking");
+		return MOTOR_STATE_ERROR;
 	}
+
+	// Enable both switches on the H Bridge to brake
+	palSetLine(m->cw);
+	palSetLine(m->ccw);
+
+	// TODO We do nothing about pwm currently; ensure this is fine when
+	// testing
+
+	// Update motor object state
+	m->state = ACTIVE_BRAKE;
+
+	return MOTOR_OK;
 }
 
 /**
  *  @brief		Disables the motor
- *  @note		Currently disables pwm signals but leaves timer on. For extended periods of inactivity,
- *			disable the pwm driver itself to conserve power.
+ *  @note		Currently disables pwm signals but leaves timer on. 
+ *			For extended periods of inactivity, disable the pwm 
+ *			driver itself to conserve power.
  *
  *  @pre		Motor should be in its idle state before disabling. This
  *			ensures that the H Bridge controlling the motor is not being 
@@ -132,13 +194,13 @@ MotorErr motor_disable(Motor *m) {
 }
 
 /**
- *  @brief		Enables the motor
- *  @note		Puts the motor into its idle state, making it ready to
- *			be actively driven
+ *  @brief		Puts the motor into its idle state and enables it
+ *  @note		Use to move between active states and prepare for
+ *			active driving
  *  
  *  @pre		Motor is initialized
  */
-MotorErr motor_enable(Motor *m) {
+MotorErr motor_ready(Motor *m) {
 	// Check to make sure motor has been initialized
 	if(m->state == UNINIT) {
 		log_error("Motor has not been initialized!");
@@ -151,8 +213,9 @@ MotorErr motor_enable(Motor *m) {
 	// Keep CW and CCW pins are low to prevent undefined behavior 
 	palClearLine(m->cw);
 	palClearLine(m->cw);
-	
-	// TODO Start PWM timer, with a duty cycle of 0
+
+	// Ensures lines are fully set before continuing
+	chThdSleepMilliseconds(10);
 	
 	m->state = IDLE;
 	return MOTOR_OK;
