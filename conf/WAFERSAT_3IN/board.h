@@ -1205,7 +1205,7 @@
  * PH7  - PIN7                      (input pullup).
  * PH8  - PIN8                      (input pullup).
  * PH9  - DCMI_D0                   (alternate 13).
- * PH10 - DCMI_D1                   (alternate 1).
+ * PH10 - DCMI_D1                   (alternate 13).
  * PH11 - PIN11                     (input pullup).
  * PH12 - PIN12                     (input pullup).
  * PH13 - PIN13                     (input pullup).
@@ -1302,7 +1302,7 @@
                                      PIN_AFIO_AF(GPIOH_PIN7, 0U))
 #define VAL_GPIOH_AFRH              (PIN_AFIO_AF(GPIOH_PIN8, 0U) |          \
                                      PIN_AFIO_AF(GPIOH_DCMI_D0, 13U) |      \
-                                     PIN_AFIO_AF(GPIOH_DCMI_D1, 1U) |       \
+                                     PIN_AFIO_AF(GPIOH_DCMI_D1, 13U) |      \
                                      PIN_AFIO_AF(GPIOH_PIN11, 0U) |         \
                                      PIN_AFIO_AF(GPIOH_PIN12, 0U) |         \
                                      PIN_AFIO_AF(GPIOH_PIN13, 0U) |         \

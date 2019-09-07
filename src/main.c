@@ -29,7 +29,7 @@
 #include "sensors/common.h"
 #include "radio/si.h"
 #include "wss_shell.h"
-
+#include "dram_config.h"
 
 static const ShellConfig shell_cfg1 = {
 		(BaseSequentialStream *)&SD1, \
@@ -51,6 +51,9 @@ int main(void)
 	sensor_init();
 	sd_init();
 	shellInit();
+	OV5640_init();
+	fsmcSdramInit();
+	fsmcSdramStart(&SDRAMD, &sdram_cfg);
 
 	while (TRUE)
 	{

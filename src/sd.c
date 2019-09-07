@@ -148,30 +148,38 @@ uint8_t sd_write(FIL* fil, char* string) {
 
 uint8_t sd_test(void) {
 	FIL f;
-	FRESULT open_err = f_open(&f, "testing123.txt", FA_CREATE_NEW);
+	FRESULT open_err = f_open(&f, "testing123.txt", FA_CREATE_NEW|FA_WRITE);
 
 	f_close(&f);
-	open_err = f_open(&f, "testing123.txt", FA_OPEN_APPEND);
+	open_err = f_open(&f, "testing123.txt", FA_OPEN_APPEND|FA_WRITE);
 
 	if(open_err != FR_OK) {
+		chprintf(&SD1, "sd.c: sd_test(): open failed, error %d\r\n",
+				open_err);
 		f_close(&f);
 		return open_err;
 	}	
 
+	chprintf(&SD1, "sd.c: sd_test(): open succeeded\r\n");
+
 	FRESULT write_err = sd_write(&f, "testing\n");
 	if(write_err) {
+		chprintf(&SD1, "sd.c: sd_test(): write failed, error %d\r\n",
+				write_err);
 		f_close(&f);
 		return write_err;
 	}
+
 	f_close(&f);
+	chprintf(&SD1, "sd.c: sd_test(): write succeeded\r\n");
 	return FR_OK;
 }
 
 void sd_mkfs(void)
 {
-	chprintf(&SD1, "Disk Status: %u\n", disk_status(1));
-	chprintf(&SD1, "Disk Init: %u\n", disk_initialize(1));
-	chprintf(&SD1, "Disk Status: %u\n", disk_status(1));
+	chprintf(&SD1, "Disk Status: %u\r\n", disk_status(1));
+	chprintf(&SD1, "Disk Init: %u\r\n", disk_initialize(1));
+	chprintf(&SD1, "Disk Status: %u\r\n", disk_status(1));
 
 
 	BYTE work[FF_MAX_SS];
@@ -180,5 +188,5 @@ void sd_mkfs(void)
 	// currently are) then mkfs makes a suitable single-entry partition table
 	f = f_mkfs("/", FM_ANY, 0, work, sizeof work);
 
-	chprintf(&SD1, "Attempted to create filesystem; success %u\n", f);
+	chprintf(&SD1, "Attempted to create filesystem; success %u\r\n", f);
  }

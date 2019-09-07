@@ -1,9 +1,9 @@
-sourceRoot: ../../chibios182/tools/ftl/processors/boards/stm32f4xx/templates
+sourceRoot: ../../../chibios182/tools/ftl/processors/boards/stm32f4xx/templates
 outputRoot: ..
 dataRoot: .
 
 freemarkerLinks: {
-    lib: ../../chibios182/tools/ftl/libs
+    lib: ../../../chibios182/tools/ftl/libs
 }
 
 data : {

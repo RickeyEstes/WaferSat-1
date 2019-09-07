@@ -1017,7 +1017,7 @@
         Resistor="PullUp"
         Level="High"
         Mode="Alternate"
-        Alternate="1" />
+        Alternate="13" />
       <pin11
         ID=""
         Type="PushPull"
