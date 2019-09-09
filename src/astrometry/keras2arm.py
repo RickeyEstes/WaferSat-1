@@ -6,9 +6,10 @@ def keras2arm(model, filepath):
     library. 
 
     @Param model        Reads from this model
-    @Param filepath     Writes the generated C Code to this filepath
+    @Param filepath     Writes the generated code to this filepath
     """
-    
+    for layer in model.layers:
+        
 
     return None;
 
