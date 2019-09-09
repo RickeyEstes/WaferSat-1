@@ -62,6 +62,7 @@
 //   GLOBAL_XO_TUNE - Configure the internal capacitor frequency tuning bank for the crystal oscillator.
 //   GLOBAL_CLK_CFG - Clock configuration options.
 */
+// GLOBAL_CLK_CFG seems to match Sven
 #define RF_GLOBAL_XO_TUNE_2 0x11, 0x00, 0x02, 0x00, 0x00, 0x00
 
 /*
@@ -85,6 +86,7 @@
 // Descriptions:
 //   INT_CTL_ENABLE - This property provides for global enabling of the three interrupt groups (Chip, Modem and Packet Handler) in order to generate HW interrupts at the NIRQ pin.
 */
+// Verified disabled 
 #define RF_INT_CTL_ENABLE_1 0x11, 0x01, 0x01, 0x00, 0x00
 
 /*
@@ -118,7 +120,9 @@
 //   PREAMBLE_PATTERN_15_8 - Configuration of the bit values describing a Non-Standard Preamble pattern.
 //   PREAMBLE_PATTERN_7_0 - Configuration of the bit values describing a Non-Standard Preamble pattern.
 */
-#define RF_PREAMBLE_TX_LENGTH_9 0x11, 0x10, 0x09, 0x00, 0x08, 0x14, 0x00, 0x0F, 0x31, 0x00, 0x00, 0x00, 0x00
+// Fifth bit was changed from 0x08, since we do not want a preamble
+// Sixth bit is correct
+#define RF_PREAMBLE_TX_LENGTH_9 0x11, 0x10, 0x09, 0x00, 0x00, 0x14, 0x00, 0x0F, 0x21, 0x00, 0x00, 0x00, 0x00
 
 /*
 // Set properties:           RF_SYNC_CONFIG_5
@@ -133,7 +137,9 @@
 //   SYNC_BITS_15_8 - Sync word.
 //   SYNC_BITS_7_0 - Sync word.
 */
-#define RF_SYNC_CONFIG_5 0x11, 0x11, 0x05, 0x00, 0x01, 0xB4, 0x2B, 0x00, 0x00
+// Sven has SYNC_CONFIG set to 0x80 instead of 0x01 - The Sync Word is not
+// transmitted and therefore must have a length of 0
+#define RF_SYNC_CONFIG_5 0x11, 0x11, 0x05, 0x00, 0x80, 0xB4, 0x2B, 0x00, 0x00
 
 /*
 // Set properties:           RF_PKT_CRC_CONFIG_7
@@ -257,7 +263,11 @@
 //   MODEM_FREQ_DEV_2 - 17-bit unsigned TX frequency deviation word.
 //   MODEM_FREQ_DEV_1 - 17-bit unsigned TX frequency deviation word.
 */
-#define RF_MODEM_MOD_TYPE_12 0x11, 0x20, 0x0C, 0x00, 0x02, 0x00, 0x07, 0x01, 0x86, 0xA0, 0x01, 0x8C, 0xBA, 0x80, 0x00, 0x12
+// Map control is correct
+// DSM modulation setting is correct
+// FREQ_DEV_1 was 0x12
+#define RF_MODEM_MOD_TYPE_12 0x11, 0x20, 0x0C, 0x00, 0x02, 0x00, 0x07, 0x01, \
+0x86, 0xA0, 0x01, 0x8C, 0xBA, 0x80, 0x00, 0x00
 
 /*
 // Set properties:           RF_MODEM_FREQ_DEV_0_1
@@ -268,7 +278,9 @@
 // Descriptions:
 //   MODEM_FREQ_DEV_0 - 17-bit unsigned TX frequency deviation word.
 */
-#define RF_MODEM_FREQ_DEV_0_1 0x11, 0x20, 0x01, 0x0C, 0xE8
+// Was 0xE8; Should correspond to third argument of MODEM_FREQ_DEV configuration
+// command
+#define RF_MODEM_FREQ_DEV_0_1 0x11, 0x20, 0x01, 0x0C, 0x79
 
 /*
 // Set properties:           RF_MODEM_TX_RAMP_DELAY_8
@@ -286,6 +298,8 @@
 //   MODEM_DECIMATION_CFG1 - Specifies three decimator ratios for the Cascaded Integrator Comb (CIC) filter.
 //   MODEM_DECIMATION_CFG0 - Specifies miscellaneous parameters and decimator ratios for the Cascaded Integrator Comb (CIC) filter.
 */
+// Ramp delay correct
+
 #define RF_MODEM_TX_RAMP_DELAY_8 0x11, 0x20, 0x08, 0x18, 0x01, 0x80, 0x08, 0x02, 0x80, 0x00, 0x20, 0x10
 
 /*
@@ -371,6 +385,7 @@
 //   MODEM_ANT_DIV_CONTROL - Specifies controls for the Antenna Diversity algorithm.
 //   MODEM_RSSI_THRESH - Configures the RSSI threshold.
 */
+// Antenna settings correct
 #define RF_MODEM_OOK_CNT1_9 0x11, 0x20, 0x09, 0x42, 0xA4, 0x02, 0xD6, 0x83, 0x02, 0x4E, 0x01, 0x80, 0xFF
 
 /*
@@ -404,6 +419,7 @@
 // Descriptions:
 //   MODEM_CLKGEN_BAND - Select PLL Synthesizer output divider ratio as a function of frequency band.
 */
+// Correct
 #define RF_MODEM_CLKGEN_BAND_1 0x11, 0x20, 0x01, 0x51, 0x0D
 
 /*
@@ -484,6 +500,7 @@
 //   PA_BIAS_CLKDUTY - Configuration of the PA Bias and duty cycle of the TX clock source.
 //   PA_TC - Configuration of PA ramping parameters.
 */
+// PA_TC correct
 #define RF_PA_MODE_4 0x11, 0x22, 0x04, 0x00, 0x08, 0x20, 0x00, 0x3D
 
 /*
@@ -541,7 +558,10 @@
 //   FREQ_CONTROL_W_SIZE - Set window gating period (in number of crystal reference clock cycles) for counting VCO frequency during calibration.
 //   FREQ_CONTROL_VCOCNT_RX_ADJ - Adjust target count for VCO calibration in RX mode.
 */
-#define RF_FREQ_CONTROL_INTE_8 0x11, 0x40, 0x08, 0x00, 0x41, 0x0D, 0x21, 0xDE, 0xEC, 0x4F, 0x20, 0xFA
+// FRAC_2 was 0x0D, FRAC_1 was 0x21, and FRAC_0 was 0xDE
+// STEP_SIZE_1 was 0xEC, STEP_SIZE_2 was 0x4F
+// FREQ_CONTROL_W_SIZE and VCOCNT is correct
+#define RF_FREQ_CONTROL_INTE_8 0x11, 0x40, 0x08, 0x00, 0x41, 0x0B, 0xB1, 0x3B, 0x0B, 0xD1, 0x20, 0xFA
 
 
 // AUTOMATICALLY GENERATED CODE! 

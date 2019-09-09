@@ -93,6 +93,6 @@ int main(void) {
 
 	transmitOnRadio(msg, frequency, step, channel, power, modulation, cca);
 
-	chThdSleepMilliseconds(10000);
+	chThdSleepMilliseconds(100000);
     }
 }

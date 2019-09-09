@@ -617,6 +617,8 @@ static bool Si446x_init(const radio_unit_t radio) {
 //  /* PA ramp timing and modulation delay. */
 //  Si446x_setProperty8(radio, Si446x_PA_TC, 0x3D);
 //
+//  TODO WAFER - Double check that these settings will work at 144.39 MHz, as
+//  they were set for a 915 MHz radio
 //  /* Synthesizer PLL settings. */
 //  Si446x_setProperty8(radio, Si446x_FREQ_CONTROL_INTE, 0x41);
 //  Si446x_setProperty24(radio, Si446x_FREQ_CONTROL_FRAC, 0x0B, 0xB1, 0x3B);
@@ -1515,12 +1517,15 @@ THD_FUNCTION(bloc_si_fifo_feeder_afsk, arg) {
                        all,
                        rssi,
                        TIME_S2I(10))) {
-      TRACE_INFO("Si   > Begin transmission, with initial fifo fill of %d", c);
+      TRACE_INFO("Si   > Begin transmission, with initial fifo fill of %d and packet size of %d", c, all);
 
       /* Feed the FIFO while data remains to be sent. */
       while((all - c) > 0) {
+
         /* Get TX FIFO free count. */
         uint8_t more = Si446x_getTXfreeFIFO(radio);
+	if(more != 0) TRACE_INFO("Si   > We have %d more free bytes in fifo", more);
+
         /* Update the FIFO free low water mark. */
         lower = (more > lower) ? more : lower;
 
@@ -1548,6 +1553,7 @@ THD_FUNCTION(bloc_si_fifo_feeder_afsk, arg) {
 	  TRACE_ERROR("Si   > Forced out of TX state due to timeout");
           break;
         }
+
       }
     } else {
       /* Transmit start failed. */
@@ -1555,6 +1561,8 @@ THD_FUNCTION(bloc_si_fifo_feeder_afsk, arg) {
       exit_msg = MSG_ERROR;
     } /* End transmit. */
     chVTReset(&send_timer);
+
+    TRACE_INFO("Exit state %d; waiting for TX to finish...", exit_msg);
 
     /*
      * If nothing went wrong wait for TX to finish.
@@ -1566,6 +1574,8 @@ THD_FUNCTION(bloc_si_fifo_feeder_afsk, arg) {
       chThdSleep(chTimeUS2I(833 * 8));
       continue;
     }
+
+    TRACE_INFO("Finished TX, exit state %d", exit_msg);
 
     /* No CCA on subsequent packet sends. */
     rssi = PKT_SI446X_NO_CCA_RSSI;
@@ -1582,7 +1592,7 @@ THD_FUNCTION(bloc_si_fifo_feeder_afsk, arg) {
     if(exit_msg == MSG_OK) {
       /* Send was OK. Release the just completed packet. */
       pktReleaseBufferObject(pp);
-      TRACE_INFO("SI   > Send succeeded");
+      TRACE_INFO("SI>Send succeeded");
     } else {
       /* Send failed so release any queue and terminate. */
       TRACE_INFO("SI   > Send failed, releasing queue");
@@ -1777,6 +1787,7 @@ THD_FUNCTION(bloc_si_fifo_feeder_fsk, arg) {
                        TIME_S2I(10))) {
       /* Feed the FIFO while data remains to be sent. */
       while((all - c) > 0) {
+	TRACE_INFO("Filling FIFO");
         /* Get TX FIFO free count. */
         uint8_t more = Si446x_getTXfreeFIFO(radio);
         /* Update the FIFO free low water mark. */
