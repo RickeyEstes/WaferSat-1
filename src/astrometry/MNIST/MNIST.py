@@ -10,7 +10,7 @@ Data gathering and preprocessing
 """
 batch_size = 128
 num_classes = 10
-epochs = 12
+epochs = 2
 
 # Keras already comes with the mnist dataset, so we load it into memory
 (x_train, y_train), (x_test, y_test) = mnist.load_data()
