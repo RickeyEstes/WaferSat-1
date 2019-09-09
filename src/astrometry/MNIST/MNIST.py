@@ -6,6 +6,12 @@ from keras.optimizers import Adadelta
 from keras.utils import to_categorical
 
 """
+Generates a simple keras model trained to do image classification using the
+MNIST dataset. That model can then be used for hardware testing computational
+performance on the STM32
+"""
+
+"""
 Data gathering and preprocessing
 """
 batch_size = 128
@@ -15,7 +21,7 @@ epochs = 2
 # Keras already comes with the mnist dataset, so we load it into memory
 (x_train, y_train), (x_test, y_test) = mnist.load_data()
 
-# Reshape and normalize data to match model
+# Reshape and normalize data to match model architecture
 x_train = x_train.reshape(x_train.shape[0], 28, 28, 1)
 x_test = x_test.reshape(x_test.shape[0], 28, 28, 1)
 
