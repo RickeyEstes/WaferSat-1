@@ -120,8 +120,8 @@
 //   PREAMBLE_PATTERN_15_8 - Configuration of the bit values describing a Non-Standard Preamble pattern.
 //   PREAMBLE_PATTERN_7_0 - Configuration of the bit values describing a Non-Standard Preamble pattern.
 */
-// Fifth bit was changed from 0x08, since we do not want a preamble
-// Sixth bit is correct
+// Fifth byte was changed from 0x08, since we do not want a preamble
+// Sixth byte is correct
 #define RF_PREAMBLE_TX_LENGTH_9 0x11, 0x10, 0x09, 0x00, 0x00, 0x14, 0x00, 0x0F, 0x21, 0x00, 0x00, 0x00, 0x00
 
 /*
