@@ -288,87 +288,6 @@ bool Si446x_read(const radio_unit_t radio, const uint8_t* txData, uint32_t txlen
     return true;
 }
 
-
-/**
- * Read data from Si446x.
- */
-//bool Si446x_read(const radio_unit_t radio,
-//		                const uint8_t* txData, uint32_t txlen,
-//                        uint8_t* rxData, uint32_t rxlen) {
-//
-//    /* Acquire bus and then start SPI. */
-//    SPIDriver *spip = Si446x_spiSetupBus(radio, &ls_spicfg);
-//    spiStart(spip, &ls_spicfg);
-//
-//    /*
-//     * Poll command buffer waiting for CTS from the READ_CMD_BUFF command.
-//     * This command does not itself cause CTS to report busy.
-//     * Allocate a buffer to use for CTS check.
-//     * Timeout after 100mS waiting for CTS.
-//     */
-//    uint8_t timeout = 100;	//TODO Was 100
-//    uint8_t rx_ready[] = {Si446x_READ_CMD_BUFF, 0x00};
-//    do {
-//      if(timeout != 100)
-//        chThdSleep(TIME_MS2I(1));
-//      spiSelect(spip);
-//      spiExchange(spip, 1, rx_ready, &rx_ready[1]);
-//      spiUnselect(spip);
-//
-//    } while(rx_ready[1] != Si446x_COMMAND_CTS && --timeout);
-//
-//    if(!timeout) {
-//      TRACE_ERROR("SI   > CTS not received");
-//      /* Stop SPI and relinquish bus. */
-//      spiStop(spip);
-//      spiReleaseBus(spip);
-//      return false;
-//    }
-//
-//    /*
-//     * Now write command and data.
-//     */
-//    spiSelect(spip);
-//    const uint8_t dummy_tx = 0x01;		// TODO Remove me; hardcodes message to getting part info
-//    spiSend(spip, 1, &dummy_tx);		/// TODO Delete me
-//    //spiSend(spip, txlen, txData);	// Original -- KEEP
-//    spiUnselect(spip);
-//
-//    uint8_t rxbuf[8];			// TODO Delete me
-//    /*
-//     * Poll waiting for CTS again using the READ_CMD_BUFF command.
-//     * Once CTS is received the response data is ready in the rx data buffer.
-//     * The buffer contains the command, CTS and 0 - 16 bytes of response.
-//     * Timeout after 100mS waiting for CTS.
-//     */
-//    timeout = 100;
-//    do {
-//      if(timeout != 100)
-//        chThdSleep(TIME_MS2I(1));
-//      spiSelect(spip);
-//      //spiExchange(spip, rxlen, rx_ready, rxData);  // Old, keep
-//      uint8_t next_command = 0x44;
-//      uint8_t length = 8;
-//      spiExchange(spip, length, &next_command, rxbuf);  
-//      spiUnselect(spip);
-//    } while(rxData[1] != Si446x_COMMAND_CTS && --timeout);
-//
-//    if(rxlen == 4) {
-//	TRACE_INFO("rxbuf is {%#x, %#x, %#x, %#x, %#x, %#x, %#x, %#x}", rxbuf[0], rxbuf[1], rxbuf[2], rxbuf[3], rxbuf[4], rxbuf[5], rxbuf[6], rxbuf[7]);
-//    }
-//
-//    /* Stop SPI and relinquish bus. */
-//    spiStop(spip);
-//    spiReleaseBus(spip);
-//    
-//   if(!timeout) {
-//      TRACE_ERROR("SI   > CTS not received");
-//      return false;
-//    }
-//
-//    return true;
-//}
-
 /* TODO: Make set property a single func with size parameter. */
 static void Si446x_setProperty8(const radio_unit_t radio,
 		uint16_t reg, uint8_t val) {
@@ -444,214 +363,6 @@ static bool Si446x_init(const radio_unit_t radio) {
     handler->radio_init = true;
     return true;
 }
-
-///**
-// * Initializes Si446x transceiver chip.
-// */
-//static bool Si446x_init(const radio_unit_t radio) {
-//
-//  TRACE_INFO("SI   > Start up and initialize radio %d", radio);
-//
-//  packet_svc_t *handler = pktGetServiceObject(radio);
-//
-//  /*
-//   * Set MCU GPIO for radio GPIO1 (CTS).
-//   * Execute radio startup sequence.
-//   */
-//  if(!Si446x_radioStartup(radio)) {
-//    TRACE_ERROR("SI   > Start up of radio %d failed", radio);
-//    return false;
-//  }
-//
-//  /* Calculate clock source parameters. */
-//  const uint8_t x3 = 0x01;
-//  const uint8_t x2 = 0x8C;
-//  const uint8_t x1 = 0xBA;
-//  const uint8_t x0 = 0x80;
-//
-//  /*
-//   * Start the chip API with the POWER_UP command.
-//   * A second POWER_UP will take place if a patch needs to be applied.
-//   * The PART_INFO command is used to determine if this is a 4464 or 4463.
-//   */
-//
-//  const uint8_t init_command[] = {0x02, 0x01, 0x00, 0x01, 0x8C, 0xBA, 0x80};
-//
-//  // One problem solved - clock configured for XTAL rather than TCXO; however, boot sequence hangs
-//  TRACE_INFO("Using following init sequence: {%#x, %#x, %#x, %#x, %#x, %#x, %#x}", init_command[0], init_command[1],
-//      init_command[2], init_command[3], init_command[4], init_command[5], init_command[6]);
-//
-//  /*
-//   * Use of writeBoot() enables SPI write without using OS delays.
-//   * The Si446x GPIO1 is set to CTS at start up.
-//   *
-//   * The Si446x SDO pin is configured to SDO data by the POWER_UP command.
-//   */
-//
-//    // For some reason, taking the radio out of the bootloader state is causing it to hang
-//  Si446x_writeBoot(radio, init_command, sizeof(init_command));
-//
-//  uint8_t tx_buf[] = {0x33};
-//  uint8_t rx_buf[7] = {0x00};
-//
-//  Si446x_read(PKT_RADIO_1, tx_buf, 1, rx_buf, 9);
-//  for(int i = 0; i < 7; i++) TRACE_INFO("FUNC_INFO at index %d is %#x", i, rx_buf[i]);
-//
-//  /*
-//   * Next get the PART_INFO.
-//   * Store details for reference.
-//   * If the part requires a patch then reset and delay (TBD).
-//   * Output the patch and re-execute the POWER_UP command.
-//   */
-//  si446x_part_t part_info;
-//  for(int i = 0; i < sizeof(part_info.info)/sizeof(part_info.info[0]); i++) part_info.info[i] = 0;
-//  const uint8_t get_part[] = {Si446x_GET_PART_INFO};
-//  Si446x_readBoot(radio, get_part, sizeof(get_part), (uint8_t *)&part_info,
-//              sizeof(part_info));
-//  for(int i = 0; i < sizeof(part_info.info) / sizeof(part_info.info[0]); i++) {
-//    TRACE_INFO("Part info at index %d is %#x", i, part_info.info[i]);
-//  }
-//
-//  /* Save the part number and ROM revision. */
-//  handler->radio_part = (part_info.info[3] << 8) + part_info.info[4];
-//  handler->radio_rom_rev = part_info.info[9];
-//
-//  /*
-//   * Check this radio requires a patch installed.
-//   * TODO: Probably should be in a table...
-//   */
-//  if(is_Si4463_patch_required(handler->radio_part, handler->radio_rom_rev)) {
-//    /* Power cycle radio and apply patch. */
-//    Si446x_radioShutdown(radio);
-//    chThdSleep(TIME_MS2I(20));
-//    Si446x_radioStartup(radio);
-//    uint16_t i = 0;
-//    while(Si4463_Patch_Data_Array[i] != 0) {
-//      Si446x_writeBoot(radio, &Si4463_Patch_Data_Array[i + 1],
-//                       Si4463_Patch_Data_Array[i]);
-//      i += Si4463_Patch_Data_Array[i] + 1;
-//    }
-//
-//    Si446x_writeBoot(radio, init_command, sizeof(init_command));
-//  }
-//
-//  /* Get and save the patch ID from FUNC_INFO for reference. */
-//  si446x_func_t func_info;
-//  const uint8_t get_func[] = {Si446x_GET_FUNC_INFO};
-//  Si446x_read(radio, get_func, sizeof(get_func), (uint8_t *)&func_info,
-//              sizeof(func_info));
-//
-//  handler->radio_patch = (func_info.info[5] << 8) + func_info.info[6];
-//
-//  /*
-//   * Set transceiver GPIOs.
-//   * GPIO0, 1 and NIRQ can now be reconfigured as required by TX or RX modes.
-//   * In that case each needs to setup GPIOs as required.
-//   */
-//  uint8_t gpio_pin_cfg_command2[] = {
-//      Si446x_GPIO_PIN_CFG,   // Command type = GPIO settings
-//      0x00,   // GPIO0        GPIO_MODE = DONOTHING
-//      0x15,   // GPIO1        GPIO_MODE = RAW_RX_DATA
-//      0x21,   // GPIO2        GPIO_MODE = RX_STATE
-//      0x20,   // GPIO3        GPIO_MODE = TX_STATE
-//      0x1B,   // NIRQ         NIRQ_MODE = CCA	    // Interrupt line, used for Clear Channel Assessment, not interrupts 
-//      0x0B,   // SDO          SDO_MODE = SDO
-//      0x00    // GEN_CONFIG
-//  };
-//
-//  Si446x_write(radio, gpio_pin_cfg_command2, sizeof(gpio_pin_cfg_command2));
-//
-//  /* TODO: We should clear interrupts here with a GET_INT_STATUS. */
-//
-//  /* If Si446x is using its own xtal set the trim capacitor value. */
-//  #if !Si446x_CLK_TCXO_EN
-//  Si446x_setProperty8(radio, Si446x_GLOBAL_XO_TUNE, 0x40);
-//  #endif
-//
-//  /* Fast response registers - not used at this time. */
-//  Si446x_setProperty8(radio, Si446x_FRR_CTL_A_MODE, 0x00);
-//  Si446x_setProperty8(radio, Si446x_FRR_CTL_B_MODE, 0x00);
-//  Si446x_setProperty8(radio, Si446x_FRR_CTL_C_MODE, 0x00);
-//  Si446x_setProperty8(radio, Si446x_FRR_CTL_D_MODE, 0x00);
-//
-//  /* Disable interrupts globally. NIRQ pin is used for CCA. */
-//  Si446x_setProperty8(radio, Si446x_INT_CTL_ENABLE, 0x00);
-//
-//  /* Set combined FIFO mode = 0x70. */
-//  Si446x_setProperty8(radio, Si446x_GLOBAL_CONFIG, 0x70);
-//
-//  /* Clear TX & RX FIFO. */
-//  const uint8_t reset_fifo[] = {Si446x_FIFO_INFO, 0x03};
-//  Si446x_write(radio, reset_fifo, sizeof(reset_fifo));
-//  /* No need to unset bits... see si docs. */
-//
-//  /*
-//   * TODO: Move the TX and RX settings out into the respective functions.
-//   * This would split up into AFSK and FSK for RX & TX.
-//   * Leave only common setup and init here.
-//   */
-//  Si446x_setProperty8(radio, Si446x_PREAMBLE_TX_LENGTH, 0x00);
-//  Si446x_setProperty8(radio, Si446x_SYNC_CONFIG, 0x80);
-//
-//  /* 32K clock disabled. Divided clock disabled. */
-//  Si446x_setProperty8(radio, Si446x_GLOBAL_CLK_CFG, 0x00);
-//
-//  /* TODO: This setting would move to 2FSK RX. */
-//  Si446x_setProperty8(radio, Si446x_PREAMBLE_CONFIG_STD_1, 0x14);
-//
-//  /* Bit polarity and mapping. */
-//  Si446x_setProperty8(radio, Si446x_MODEM_MAP_CONTROL, 0x00);
-//
-//  /* Delta Sigma modulation control for PLL synthesizer. */
-//  Si446x_setProperty8(radio, Si446x_MODEM_DSM_CTRL, 0x07);
-//
-//  /* PLL synthesizer settings. */
-//  Si446x_setProperty8(radio, Si446x_MODEM_CLKGEN_BAND, 0x0D);
-//
-//  /* Deviation set to +-0.5KHz. */
-//  Si446x_setProperty24(radio, Si446x_MODEM_FREQ_DEV, 0x00, 0x00, 0x79);
-//
-//  /* Ramp down after TX final symbol. */
-//  Si446x_setProperty8(radio, Si446x_MODEM_TX_RAMP_DELAY, 0x01);
-//
-//  /* PA ramp timing and modulation delay. */
-//  Si446x_setProperty8(radio, Si446x_PA_TC, 0x3D);
-//
-//  TODO WAFER - Double check that these settings will work at 144.39 MHz, as
-//  they were set for a 915 MHz radio
-//  /* Synthesizer PLL settings. */
-//  Si446x_setProperty8(radio, Si446x_FREQ_CONTROL_INTE, 0x41);
-//  Si446x_setProperty24(radio, Si446x_FREQ_CONTROL_FRAC, 0x0B, 0xB1, 0x3B);
-//  Si446x_setProperty16(radio, Si446x_FREQ_CONTROL_CHANNEL_STEP_SIZE, 0x0B, 0xD1);
-//  Si446x_setProperty8(radio, Si446x_FREQ_CONTROL_W_SIZE, 0x20);
-//  Si446x_setProperty8(radio, Si446x_FREQ_CONTROL_VCOCNT_RX_ADJ, 0xFA);
-//
-//  /* Antenna settings. */
-//  Si446x_setProperty8(radio, Si446x_MODEM_ANT_DIV_MODE, 0x01);
-//  Si446x_setProperty8(radio, Si446x_MODEM_ANT_DIV_CONTROL, 0x80);
-//
-//  /* RSSI value compensation. */
-//  if(is_part_Si4463(handler->radio_part))
-//    Si446x_setProperty8(radio, Si446x_MODEM_RSSI_COMP, 0x44);
-//  else
-//    Si446x_setProperty8(radio, Si446x_MODEM_RSSI_COMP, 0x40);
-//
-//  /*
-//   * TODO: Preamble configuration should be set in each mode.
-//   * Will be needed for RX FSK mode.
-//   * For now it is not relevant since:
-//   * - we don't have RX FSK implemented yet.
-//   * - RX AFSK preamble is decoded in the MCU DSP chain.
-//   * - TX AFSK encodes its own preamble and then upsamples the entire packet.
-//   * - TX 2FSK also encodes its own preamble which is sent as data by the PH.
-//   */
-//  Si446x_setProperty8(radio, Si446x_PREAMBLE_CONFIG, 0x21);
-//
-//  /* Measure the chip temperature and save initial measurement. */
-//  Si446x_getTemperature(radio);
-//  handler->radio_init = true;
-//  return true;
-//}
 
 /**
  * Intialize radio only if it has been shutdown.
@@ -732,23 +443,6 @@ bool Si446x_setBandParameters(const radio_unit_t radio,
   return true;
 }
 
-/*static void Si446x_setShift(uint16_t shift)
-{
-    if(!shift)
-        return;
-
-    float units_per_hz = (( 0x40000 * outdiv ) / (float)Si446x_CCLK);
-
-    // Set deviation for 2FSK
-    uint32_t modem_freq_dev = (uint32_t)(units_per_hz * shift / 2.0 );
-    uint8_t modem_freq_dev_0 = 0xFF & modem_freq_dev;
-    uint8_t modem_freq_dev_1 = 0xFF & (modem_freq_dev >> 8);
-    uint8_t modem_freq_dev_2 = 0xFF & (modem_freq_dev >> 16);
-
-    uint8_t set_modem_freq_dev_command[] = {0x11, 0x20, 0x03, 0x0A, modem_freq_dev_2, modem_freq_dev_1, modem_freq_dev_0};
-    Si446x_write(set_modem_freq_dev_command, 7);
-}*/
-
 static void Si446x_setPowerLevel(const radio_unit_t radio,
 								 const radio_pwr_t level) {
     // Set the Power
@@ -758,12 +452,9 @@ static void Si446x_setPowerLevel(const radio_unit_t radio,
                  sizeof(set_pa_pwr_lvl_property_command));
 }
 
-
-
 /*
  *  Radio modulation settings
  */
-
 static void Si446x_setModemAFSK_TX(const radio_unit_t radio) {
     // Setup the NCO modulo and oversampling mode
     uint32_t s = Si446x_CCLK / 10;
@@ -989,7 +680,6 @@ static uint8_t Si446x_getTXfreeFIFO(const radio_unit_t radio) {
 /*
  *  Radio States
  */
-
 radio_signal_t Si446x_getCurrentRSSI(const radio_unit_t radio) {
   /* Get status. Leave any pending interrupts intact. */
     const uint8_t status_info[] = {Si446x_GET_MODEM_STATUS, 0xEF};
@@ -1117,7 +807,6 @@ static bool Si446x_checkCCAthreshold(const radio_unit_t radio, uint8_t ms) {
     /* Sleep one tick. */
     chThdSleep(1);
   }
-  TRACE_INFO("Received CCA of %d in %d ms", cca, ms);
   /* Return result. */
   return cca > ms;
 }
@@ -1184,7 +873,6 @@ static bool Si446x_transmit(const radio_unit_t radio,
     while(((state = Si446x_getState(radio)) != Si446x_STATE_RX	
         || Si446x_checkCCAthreshold(radio, CCA_VALID_TIME_MS))
         && chVTIsSystemTimeWithinX(t0, t0 + cca_timeout)) {
-	TRACE_INFO("Radio in state %d", state);
       chThdSleep(TIME_MS2I(1));
     }
     /* Clear channel timing. */
@@ -1486,8 +1174,6 @@ THD_FUNCTION(bloc_si_fifo_feeder_afsk, arg) {
     /* Get the FIFO buffer amount currently available. */
     uint8_t free = Si446x_getTXfreeFIFO(radio);
 
-    TRACE_INFO("Si >   We have %d free bytes to transmit", free);
-
     /* Calculate initial FIFO fill. */
     uint16_t c = (all > free) ? free : all;
 
@@ -1524,7 +1210,6 @@ THD_FUNCTION(bloc_si_fifo_feeder_afsk, arg) {
 
         /* Get TX FIFO free count. */
         uint8_t more = Si446x_getTXfreeFIFO(radio);
-	if(more != 0) TRACE_INFO("Si   > We have %d more free bytes in fifo", more);
 
         /* Update the FIFO free low water mark. */
         lower = (more > lower) ? more : lower;
@@ -1551,6 +1236,14 @@ THD_FUNCTION(bloc_si_fifo_feeder_afsk, arg) {
           Si446x_setReadyState(radio);
           exit_msg = MSG_TIMEOUT;
 	  TRACE_ERROR("Si   > Forced out of TX state due to timeout");
+
+	  uint8_t data[] = {Si446x_GET_INT_STATUS};
+	  uint8_t rx_buf[9];
+	  Si446x_read(radio, data, 1, rx_buf, 9);
+
+	  TRACE_ERROR("Si   > Got interrupt status {0x%x, 0x%x, 0x%x, 0x%x,\
+	  0x%x, 0x%x, 0x%x, 0x%x, 0x%x}", rx_buf[0], rx_buf[1], \
+	  rx_buf[2], rx_buf[3], rx_buf[4], rx_buf[5], rx_buf[6], rx_buf[7], rx_buf[8]);
           break;
         }
 
@@ -1562,8 +1255,6 @@ THD_FUNCTION(bloc_si_fifo_feeder_afsk, arg) {
     } /* End transmit. */
     chVTReset(&send_timer);
 
-    TRACE_INFO("Exit state %d; waiting for TX to finish...", exit_msg);
-
     /*
      * If nothing went wrong wait for TX to finish.
      * Else don't wait.
@@ -1574,8 +1265,6 @@ THD_FUNCTION(bloc_si_fifo_feeder_afsk, arg) {
       chThdSleep(chTimeUS2I(833 * 8));
       continue;
     }
-
-    TRACE_INFO("Finished TX, exit state %d", exit_msg);
 
     /* No CCA on subsequent packet sends. */
     rssi = PKT_SI446X_NO_CCA_RSSI;

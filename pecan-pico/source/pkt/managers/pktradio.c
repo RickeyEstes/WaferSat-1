@@ -83,11 +83,11 @@ THD_FUNCTION(pktRadioManager, arg) {
   chMsgRelease(initiator, MSG_OK);
   /* Run until close request and no outstanding TX tasks. */
   while(true) {
-    TRACE_INFO("Received task object");
     /* Check for task requests. */
     radio_task_object_t *task_object;
     (void)chFifoReceiveObjectTimeout(radio_queue,
                          (void *)&task_object, TIME_INFINITE);
+    TRACE_INFO("Received task object");
     /* Something to do. */
 
     /* Process command. */
@@ -364,7 +364,7 @@ thread_t *pktRadioManagerCreate(const radio_unit_t radio) {
 
   packet_svc_t *handler = pktGetServiceObject(radio);
 
-  //chDbgAssert(handler != NULL, "invalid radio ID");
+  chDbgAssert(handler != NULL, "invalid radio ID");
 
   /* Create the radio manager name. */
   chsnprintf(handler->rtask_name, sizeof(handler->rtask_name),
@@ -571,7 +571,7 @@ void pktSubmitRadioTask(const radio_unit_t radio,
                          const radio_task_cb_t cb) {
 
   packet_svc_t *handler = pktGetServiceObject(radio);
-  //chDbgAssert(handler != NULL, "invalid radio ID");
+  chDbgAssert(handler != NULL, "invalid radio ID");
 
   dyn_objects_fifo_t *task_fifo = handler->the_radio_fifo;
   chDbgAssert(task_fifo != NULL, "no radio task fifo");

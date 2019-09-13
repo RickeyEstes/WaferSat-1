@@ -233,8 +233,10 @@ static const uint8_t SI_CFG[] = RADIO_CONFIGURATION_DATA_ARRAY;
 #define Si446x_getCCA(cca_line)		palReadLine(cca_line)
 
  /* Frequency offset corrected oscillator frequency */
-#define Si446x_CCLK                 ((Si446x_CLK) + (Si446x_CLK_OFFSET)      \
-                                      * (Si446x_CLK) / 1000000)
+/*#define Si446x_CCLK                 ((Si446x_CLK) + (Si446x_CLK_OFFSET)      \
+                                      * (Si446x_CLK) / 1000000)*/
+// TODO Correct for frequency offset
+#define Si446x_CCLK		26000000
 
 #define is_part_Si4463(part) (part == 0x4463)
 

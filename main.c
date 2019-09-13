@@ -51,17 +51,6 @@ int main(void) {
 
     TRACE_INFO("\n\rBEGIN THE RADIO TEST");
 
-    /*while(true) {
-	// Test SPI
-	uint8_t tx_buf[] = {0x33};
-	uint8_t rx_buf[3] = {0x00};
-
-	Si446x_conditional_init(PKT_RADIO_1);
-	Si446x_read(PKT_RADIO_1, tx_buf, 1, rx_buf, 9);
-	TRACE_INFO("Got {%#x, %#x, %#x}", rx_buf[0], rx_buf[1], rx_buf[2]); 
-	chThdSleepMilliseconds(3000);
-    }*/
-
     pktServiceCreate(PKT_RADIO_1);
 
     // APRS message parameters 
@@ -93,6 +82,6 @@ int main(void) {
 
 	transmitOnRadio(msg, frequency, step, channel, power, modulation, cca);
 
-	chThdSleepMilliseconds(100000);
+	chThdSleepMilliseconds(3000);
     }
 }

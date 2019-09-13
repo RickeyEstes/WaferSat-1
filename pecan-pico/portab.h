@@ -107,13 +107,13 @@
 #define BAND_MIN_2M_FREQ            144000000               /* Minimum allowed frequency in Hz */
 #define BAND_MAX_2M_FREQ            148000000               /* Maximum allowed frequency in Hz */
 #define BAND_STEP_2M_HZ             12500
-#define BAND_DEF_2M_APRS            144800000               /* Default frequency in Hz.        */
+#define BAND_DEF_2M_APRS            144390000               /* Default frequency in Hz.        */
 #define BAND_MIN_70CM_FREQ          420000000               /* Minimum allowed frequency in Hz */
 #define BAND_MAX_70CM_FREQ          450000000               /* Maximum allowed frequency in Hz */
 #define BAND_STEP_70CM_HZ           12500
 #define BAND_DEF_70CM_APRS          439100000               /* Default frequency in Hz.        */
 
-#define DEFAULT_OPERATING_FREQ      144800000
+#define DEFAULT_OPERATING_FREQ      144390000
 #if DEFAULT_OPERATING_FREQ < BAND_MIN_2M_FREQ
 #error "Default operating frequency must be an absolute value in Hz"
 #endif
@@ -121,7 +121,7 @@
 /* Si446x clock setup. */
 #define Si446x_CLK					STM32_HSECLK			/* Oscillator frequency in Hz */
 #define Si446x_CLK_OFFSET			22						/* Oscillator frequency drift in ppm */
-#define Si446x_CLK_TCXO_EN			false						/* Set this true, if a TCXO is used, false for XTAL */
+#define Si446x_CLK_TCXO_EN			true						/* Set this true, if a TCXO is used, false for XTAL */
 
 /* LED status indicators (set to PAL_NOLINE if not available). */
 #define LINE_OVERFLOW_LED               PAL_NOLINE
