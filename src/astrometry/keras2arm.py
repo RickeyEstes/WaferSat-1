@@ -51,19 +51,31 @@ class _LayerWrapper:
         convolutional layers and NC (# output channels, # input channels) 
         for dense layers
         """
+        if not self._has_weights():
+            return None
+
+        # Layer parameters stored as (weights, bias)
+        params = self.layer.get_weights() 
+
+        weights = params[0]
+        bias = params[1]
 
         if "dense" in self.layer.name:
-            # Layer parameters stored as (weights, bias)
-            params = self.layer.get_weights()
+            # TODO Check if data format is some analogue of "channels first" before converting
+            # Transpose layer weights to the (output, input) shape
+            self.new_weights = weights.T
+        
+        elif "conv" in self.layer.name:
+            # The layer's data format should be channels_last. If the trained
+            # model is channels_first, we must reshape
+            # TODO Reshape instead of throwing an error 
+            assert("last" in self.layer.data_format, 
+                """ Currently the converter only accepts convolution layers 
+                    with the \"channels last\" data format """)
 
-            self.new_weights = params[0]
-            self.new_bias = params[1]
-
-            # Transpose and flatten layer weights, to export to a 1D array
-            self.new_weights = self.new_weights.T.flatten('C')
-
-            print(self.new_weights.shape) 
-
+        # Flatten weights C-Style to export to a 1D array
+        self.new_weights = weights.flatten('C')
+        self.new_bias = bias
             
     def quantize_weights(self):
         """
@@ -81,13 +93,24 @@ class _LayerWrapper:
     def print_converted_weights(self):
         """
         Writes the layer's weights as a C header file to stdout
+
+        @pre                new_weights have been quantized
         """
         if not self._has_weights():
             return None
 
-        # Stores the weights as a comma-separated string
+        # TODO Added to make debugging easier; remove when done
+        self.new_weights = self.new_weights[0:8]
+
+        # Generated macro name
+        weights_name = self.name.upper()
+
+        # "Comma-separated string storing the weights
         weights_str = ','.join(str(weight) for weight in self.new_weights)
-        print(weights_str)
+
+        print("#define %s = {%s}" % (weights_name, weights_str))
+
+        # TODO Print bias
 
         return None
 
