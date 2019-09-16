@@ -1,6 +1,7 @@
 from keras.models import Model
 from keras.models import load_model
 import enum
+import numpy as np
 
 """
 Note: If using as a shell script, writes output to stdout. This can then be piped 
@@ -32,8 +33,6 @@ class _LayerWrapper:
         # Unique name assigned to layer
         self.name = layer.name 
 
-        
-
         # Converted and quantized weights, for ARM
         self.new_weights = []
         self.new_bias = []
@@ -52,6 +51,19 @@ class _LayerWrapper:
         convolutional layers and NC (# output channels, # input channels) 
         for dense layers
         """
+
+        if "dense" in self.layer.name:
+            # Layer parameters stored as (weights, bias)
+            params = self.layer.get_weights()
+
+            self.new_weights = params[0]
+            self.new_bias = params[1]
+
+            # Transpose and flatten layer weights, to export to a 1D array
+            self.new_weights = self.new_weights.T.flatten('C')
+
+            print(self.new_weights.shape) 
+
             
     def quantize_weights(self):
         """
@@ -70,15 +82,20 @@ class _LayerWrapper:
         """
         Writes the layer's weights as a C header file to stdout
         """
-        if not self.has_weights:
+        if not self._has_weights():
             return None
+
+        # Stores the weights as a comma-separated string
+        weights_str = ','.join(str(weight) for weight in self.new_weights)
+        print(weights_str)
 
         return None
 
 if __name__ == "__main__":
-    # Debugging code
+    # Test code
     mnist_model = load_model('./MNIST/MNIST_model.h5')
 
     for layer in mnist_model.layers:
         wrapper = _LayerWrapper(layer)
+        wrapper.convert_weights()
         wrapper.print_converted_weights()
