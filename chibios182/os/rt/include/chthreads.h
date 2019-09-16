@@ -429,7 +429,7 @@ static inline void chThdDoDequeueNextI(threads_queue_t *tqp, msg_t msg) {
 
   tp = queue_fifo_remove(tqp);
 
-  // TODO Added to display value while debugging in gdb, delete when done
+  // TODO Shows state while debugging in gdb, delete when done
   volatile tstate_t state = tp->state;
   if(state != CH_STATE_QUEUED) state = state;
 
