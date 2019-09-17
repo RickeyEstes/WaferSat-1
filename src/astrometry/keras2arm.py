@@ -27,6 +27,9 @@ class _LayerWrapper:
         """
         @param layer        A layer within a keras model
         """
+        # Number of bits per weight (either 8 or 16)
+        self.weight_size = 8
+
         # Keeps a copy of the original layer
         self.layer = layer
 
@@ -87,6 +90,24 @@ class _LayerWrapper:
         @param layer        A keras layer within a model
         @return             A list containing the model weights
         """
+        if not self._has_weights():
+            return None
+
+        """ Choosing a good q format (# integer bits, # decimal bits) """
+
+        # Get min number of integer bits needed for q conversion (ARM's method)
+        min_wt = min(self.new_weights)
+        max_wt = max(self.new_weights)
+        int_bits = max(0, np.ceil(np.log2(max(abs(min_wt),abs(max_wt)))))
+        dec_bits = self.weight_size - int_bits - 1  # (We leave a bit for sign)
+
+        # Use ARM's method to perform the quantization
+        self.new_weights = np.round((2**dec_bits)*self.new_weights)
+
+        # TODO Better model accuracy can be achieved if the model were
+        # repeatedly evaluated during the quantization process. This will not
+        # affect performance during inference, only memory usage at higher
+        # resolutions. 
 
         return None
 
@@ -105,12 +126,11 @@ class _LayerWrapper:
         # Generated macro name
         weights_name = self.name.upper()
 
-        # "Comma-separated string storing the weights
+        # Comma-separated string storing the weights
         weights_str = ','.join(str(weight) for weight in self.new_weights)
-
         print("#define %s = {%s}" % (weights_name, weights_str))
 
-        # TODO Print bias
+        # TODO Handle bias
 
         return None
 
@@ -121,4 +141,5 @@ if __name__ == "__main__":
     for layer in mnist_model.layers:
         wrapper = _LayerWrapper(layer)
         wrapper.convert_weights()
+        wrapper.quantize_weights()
         wrapper.print_converted_weights()
