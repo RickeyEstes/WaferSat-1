@@ -121,13 +121,13 @@ class _LayerWrapper:
             return None
 
         # TODO Added to make debugging easier; remove when done
-        self.new_weights = self.new_weights[0:8]
+        self.new_weights = self.new_weights[:70]
 
         # Generated macro name
         weights_name = self.name.upper()
 
         # Comma-separated string storing the weights
-        weights_str = ','.join(str(weight) for weight in self.new_weights)
+        weights_str = ','.join(str(int(weight)) for weight in self.new_weights)
         print("#define %s = {%s}" % (weights_name, weights_str))
 
         # TODO Handle bias
