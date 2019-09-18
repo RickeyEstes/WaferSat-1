@@ -27,9 +27,6 @@ class _LayerWrapper:
         """
         @param layer        A layer within a keras model
         """
-        # Number of bits per weight (either 8 or 16)
-        self.weight_size = 8
-
         # Keeps a copy of the original layer
         self.layer = layer
 
@@ -39,6 +36,17 @@ class _LayerWrapper:
         # Converted and quantized weights, for ARM
         self.new_weights = []
         self.new_bias = []
+
+        # Number of bits per weight (either 8 or 16)
+        self.weight_size = 8
+
+        # Number of decimal bits per image pixel
+        # TODO Is the input vector recasted as a series of q7 or q.7 integers?
+        # This may be dependent on the network architecture.
+        self.image_q_shift = 0
+
+        # Shift (calculated after quantization)
+        self.shift = 0
 
     def _has_weights(self):
         """
@@ -64,7 +72,9 @@ class _LayerWrapper:
         bias = params[1]
 
         if "dense" in self.layer.name:
-            # TODO Check if data format is some analogue of "channels first" before converting
+            # TODO Check if data format is some analogue of "channels first" 
+            # before converting
+
             # Transpose layer weights to the (output, input) shape
             self.new_weights = weights.T
         
@@ -82,10 +92,10 @@ class _LayerWrapper:
             
     def quantize_weights(self):
         """
-        Converts the layer's weights from float32 to either an int or q
-        format
+        Converts the layer's weights from float32 to a fixed-point format
+        (called q7 by ARM).
         
-        @pre                new_weights have been converted
+        @pre                Weights have been converted
         
         @param layer        A keras layer within a model
         @return             A list containing the model weights
@@ -104,6 +114,11 @@ class _LayerWrapper:
         # Use ARM's method to perform the quantization
         self.new_weights = np.round((2**dec_bits)*self.new_weights)
 
+        # Calculating the shift is trivial if we assume the input vector
+        # consists of 8-bit integers from (0-255), quantized to an unsigned 
+        # q7.0 or q8.0 format (TODO double-check if we get an extra bit if unsigned)
+        self.shift = self.image_q_shift + dec_bits
+
         # TODO Better model accuracy can be achieved if the model were
         # repeatedly evaluated during the quantization process. This will not
         # affect performance during inference, only memory usage at higher
@@ -115,7 +130,7 @@ class _LayerWrapper:
         """
         Writes the layer's weights as a C header file to stdout
 
-        @pre                new_weights have been quantized
+        @pre                Weights have been quantized
         """
         if not self._has_weights():
             return None
