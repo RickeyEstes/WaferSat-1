@@ -8,7 +8,7 @@ Note: If using as a shell script, writes output to stdout. This can then be pipe
 into a header file.
 """
 
-def keras2arm(model, filepath):
+def keras2arm(model):
     """
     Acts as an interpreter between a keras model and the CMSIS neural network
     library. 
@@ -16,7 +16,12 @@ def keras2arm(model, filepath):
     @param model        Reads from this model
     @param filepath     Writes the generated code to this filepath
     """
-    
+    for layer in mnist_model.layers:
+        wrapper = _LayerWrapper(layer)
+        wrapper.convert_weights()
+        wrapper.quantize_weights()
+        wrapper.print_converted_weights()
+
     return None
 
 class _LayerWrapper:
@@ -47,6 +52,12 @@ class _LayerWrapper:
         # Shifts for fixed point arithmetic (calculated after quantization)
         self.bias_shift = 0
         self.output_shift = 0
+
+        # If convolution:
+        #  - (# output channels, height, width, # input channels)
+        # If dense:
+        #  - (# output channels, # input channels)
+        self.data_format = []
 
     def _has_weights(self):
         """
@@ -81,8 +92,8 @@ class _LayerWrapper:
             # TODO Check if data format is some analogue of "channels first" 
             # before converting
 
-            # Transpose layer weights to the (output, input) shape
-            self.new_weights = weights.T
+            # Transpose layer weights from the HWCN format to NHWC
+            self.new_weights = weights.transpose(3,0,1,2)
         
         elif self._is_dense_layer(): 
             # The layer's data format should be channels_last. If the trained
@@ -90,8 +101,11 @@ class _LayerWrapper:
             # TODO Check data format before blindly transposing
             self.new_weights = weights.T
 
+        # Populate data format
+        self.data_format = self.new_weights.shape
+
         # Flatten weights C-Style to export to a 1D array
-        self.new_weights = weights.flatten('C')
+        self.new_weights = weights.ravel()
         self.new_bias = bias
             
     def quantize_weights(self):
@@ -156,9 +170,8 @@ class _LayerWrapper:
             param_name: Parameter name (string)
             param_value: Value of the given parameter (int)
         """
+        print(f"#define {self.layer_name}_{param_name.upper()} = {param_value}")
 
-        print("#define {}_{} = {}".format(self.layer_name, param_name.upper(),
-            param_value))
         return None
 
     def _print_convolution_parameters(self):
@@ -167,9 +180,11 @@ class _LayerWrapper:
         """
         assert self.layer.rank==2,"Converter currently only supports Conv2D layers"
 
-        self._print_parameter("KERNEL_X", layer.kernel_size[0])
-        self._print_parameter("KERNEL_Y", layer.kernel_size[1])
-        self._print_parameter("STRIDES", layer.strides[0])
+        self._print_parameter("INPUT_DIMENSIONS", self.layer.rank)
+        self._print_parameter("INPUT_CHANNELS", old_weights.shape[-1])
+        self._print_parameter("KERNEL_X", self.layer.kernel_size[0])
+        self._print_parameter("KERNEL_Y", self.layer.kernel_size[1])
+        self._print_parameter("STRIDES", self.layer.strides[0])
         return None
 
     def print_converted_weights(self):
@@ -184,9 +199,12 @@ class _LayerWrapper:
         # TODO Added to make debugging easier; remove when done
         self.new_weights = self.new_weights[:30]
 
-        # Comma-separated string storing the weights
+        # Comma-separated string storing the weights and bias
         weights_str = ','.join(str(int(weight)) for weight in self.new_weights)
         bias_str = ','.join(str(int(bias)) for bias in self.new_bias)
+
+        weights_str = '{'+weights_str+'}'
+        bias_str = '{'+bias_str+'}'
 
         # Printing the preprocessor macros
         print("")
@@ -204,8 +222,4 @@ if __name__ == "__main__":
     # Test code
     mnist_model = load_model('./MNIST/MNIST_model.h5')
 
-    for layer in mnist_model.layers:
-        wrapper = _LayerWrapper(layer)
-        wrapper.convert_weights()
-        wrapper.quantize_weights()
-        wrapper.print_converted_weights()
+    keras2arm(mnist_model)
