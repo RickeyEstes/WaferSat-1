@@ -180,8 +180,13 @@ class _LayerWrapper:
         """
         assert self.layer.rank==2,"Converter currently only supports Conv2D layers"
 
-        self._print_parameter("INPUT_DIMENSIONS", self.layer.rank)
-        self._print_parameter("INPUT_CHANNELS", old_weights.shape[-1])
+        # TODO Padding sizes, buffer space for input
+        # TODO How does the CMSIS convolution library know the number of pixels
+        # in each channel?
+
+        self._print_parameter("INPUT_RANK", self.layer.rank)
+        self._print_parameter("INPUT_CHANNELS", self.data_format[-1])
+        self._print_parameter("OUTPUT_CHANNELS", self.data_format[0])
         self._print_parameter("KERNEL_X", self.layer.kernel_size[0])
         self._print_parameter("KERNEL_Y", self.layer.kernel_size[1])
         self._print_parameter("STRIDES", self.layer.strides[0])
