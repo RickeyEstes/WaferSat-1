@@ -1,0 +1,80 @@
+input: "data"
+input_dim: 1
+input_dim: 1
+input_dim: 28
+input_dim: 28
+layer {
+  name: "conv2d_1"
+  type: "Convolution"
+  bottom: "data"
+  top: "conv2d_1"
+  convolution_param {
+    num_output: 16
+    kernel_size: 4
+    stride: 1
+  }
+}
+layer {
+  name: "activation_1"
+  type: "ReLU"
+  bottom: "conv2d_1"
+  top: "conv2d_1"
+}
+layer {
+  name: "conv2d_2"
+  type: "Convolution"
+  bottom: "conv2d_1"
+  top: "conv2d_2"
+  convolution_param {
+    num_output: 16
+    kernel_size: 4
+    stride: 1
+  }
+}
+layer {
+  name: "activation_2"
+  type: "ReLU"
+  bottom: "conv2d_2"
+  top: "conv2d_2"
+}
+layer {
+  name: "conv2d_3"
+  type: "Convolution"
+  bottom: "conv2d_2"
+  top: "conv2d_3"
+  convolution_param {
+    num_output: 16
+    kernel_size: 4
+    stride: 1
+  }
+}
+layer {
+  name: "activation_3"
+  type: "ReLU"
+  bottom: "conv2d_3"
+  top: "conv2d_3"
+}
+layer {
+  name: "flatten_1"
+  type: "Flatten"
+  bottom: "conv2d_3"
+  top: "flatten_1"
+}
+layer {
+  name: "dense_1"
+  type: "InnerProduct"
+  bottom: "flatten_1"
+  top: "dense_1"
+  inner_product_param {
+    num_output: 10
+    weight_filler {
+      type: "xavier"
+    }
+  }
+}
+layer {
+  name: "dense_1s"
+  type: "Softmax"
+  bottom: "dense_1"
+  top: "dense_1"
+}

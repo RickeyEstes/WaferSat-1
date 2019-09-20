@@ -115,7 +115,7 @@ include $(CHIBIOS)/os/various/shell/shell.mk
 #include $(CHIBIOS)/os/various/lwip_bindings/lwip.mk
 include $(CHIBIOS)/os/various/fatfs_bindings/fatfs.mk
 
-include ./pecan-pico/pecan-pico.mk
+include ./pecan/pecan-pico.mk
 
 # Define linker script file here
 LDSCRIPT = STM32F429xI_SDRAM.ld
