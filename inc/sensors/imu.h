@@ -14,7 +14,7 @@
 #include "ch.h"
 #include "hal.h"
 
-#define IMU_ADDR					0x68 //ad0 low
+#define IMU_ADDR					0xD0 //ad0 low
 #define IMU_WHO_AM_I				0x75
 
 #define IMU_ACCEL_XOUT_H			0x3b

@@ -54,7 +54,7 @@
 #define BME_REGISTER_HUMIDDATA		0xFD
 
 #define BME_CHIPID					0x60
-#define BME_ADDR					0x77
+#define BME_ADDR					0xEE
 
 // Number of samples from BME or something like that
 #define BME_MEANS					32

@@ -15,7 +15,7 @@
 #include "hal.h"
 #include "common.h"
 
-#define THERM_ADDR                     0x48
+#define THERM_ADDR                     0x90
 #define THERM_TEMP_REG                 0x00
 #define THERM_CONTR_REG                0x01
 #define THERM_TEMP_THRESH_HIGH_REG     0x02

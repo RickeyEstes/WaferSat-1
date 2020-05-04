@@ -29,5 +29,7 @@ uint8_t I2C_scan(uint8_t* addresses);
 
 uint8_t I2C_hasError(void);
 
+#define BOARD_WAFERSAT_3IN 1
+
 #endif
 

@@ -7,7 +7,7 @@
 #include "pi2c.h"
 #include "log.h"
 
-#ifdef BOARD_WAFERSAT_3IN
+#if BOARD_WAFERSAT_3IN
   #define I2C_DRIVER	(&I2CD2)
 #else
   #define I2C_DRIVER    (&I2CD1)

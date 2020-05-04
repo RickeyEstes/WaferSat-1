@@ -38,12 +38,18 @@ int main(void) {
 	// initialize watchdog first
 	sd_init();
 	log_init();
+	log_info("help\r\n");
 	sensor_init();
-	fsmcSdramInit();
-	fsmcSdramStart(&SDRAMD, &sdram_cfg);
-	OV5640_init();
-	si_err_t error = si_init();
-	log_info("Initialized with err %u.", error);
+	//fsmcSdramInit();
+	//fsmcSdramStart(&SDRAMD, &sdram_cfg);
+	// OV5640_init();
+	palSetPadMode(GPIOE, GPIOE_HEADER_PINE2, PAL_MODE_OUTPUT_PUSHPULL);
+	palSetPad(GPIOE, GPIOE_HEADER_PINE2);
+	palSetPadMode(GPIOI, 8U, PAL_MODE_OUTPUT_PUSHPULL);
+	palClearPad(GPIOI, 8U);
+	//si_err_t error = si_init();
+	//log_info("Initialized with err %u.", error);
+	log_info("Initialized with err .");
 
 	wdg_init();
 
@@ -51,7 +57,7 @@ int main(void) {
 	 
 	while (true) {
 
-		if((count % 60) == 0) {
+		if(true) {
 			uint8_t err = 0;
 			err += log_data();
 			struct ltr_t light = ltr_get();
@@ -73,9 +79,9 @@ int main(void) {
 
 		count++;
 
-		chThdSleepMilliseconds(500);
+		// chThdSleepMilliseconds(500);
 		LED_CLEAR();
-		chThdSleepMilliseconds(500);
+		// chThdSleepMilliseconds(500);
 		wdg_reset();
 	}
 }

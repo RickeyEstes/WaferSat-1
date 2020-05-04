@@ -29,7 +29,7 @@ enum SensorErr therm_init(void)
 	enum SensorErr err = SENSOR_OK;
 	for(uint8_t id = 0; id < 2; id++) {
 		if(I2C_write8(
-			THERM_ADDR | (id & 0x07), THERM_CONTR_REG,
+			THERM_ADDR | ((id << 1) & 0x07), THERM_CONTR_REG,
 			THERM_CONSECUTIVE_FAULTS_6  | THERM_RESOLUTION_12_BIT
 		)) {
 			log_trace("Successfully initialized therm sensor with ID %u!", id);
@@ -55,7 +55,7 @@ static enum SensorErr therm_status(uint8_t id)
 	// TODO Enforce ID restriction
 
 	uint8_t val;
-	if(I2C_read8(THERM_ADDR | (id & 0x07), THERM_CONTR_REG, &val)) {
+	if(I2C_read8(THERM_ADDR | ((id << 1) & 0x07), THERM_CONTR_REG, &val)) {
 		return SENSOR_OK;
 	} else {
 		log_error("Failed to communicate with THERM ID %u", id);
@@ -86,7 +86,7 @@ struct therm_t therm_get(void)
 	}
 	if(therm_status(1) == SENSOR_OK) {
 		 uint16_t val;
-		 if(I2C_read16(THERM_ADDR | (1 & 0x07), THERM_TEMP_REG, &val)) {
+		 if(I2C_read16(THERM_ADDR | (0x02 & 0x07), THERM_TEMP_REG, &val)) {
 			// convert .0625C/cnt to 0.01C/cnt
 			data.therm_1 = (val >> 4) * (25 / 4);
 		} else {

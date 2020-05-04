@@ -14,7 +14,7 @@
 #include "ch.h"
 #include "hal.h"
 
-#define LTR_ADDR            0x29
+#define LTR_ADDR            0x52
 #define LTR_CONTR_REG       0x80
 #define LTR_MEAS_RATE_REG   0x85
 #define LTR_MANUFAC_ID      0x87

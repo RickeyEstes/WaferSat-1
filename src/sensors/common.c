@@ -14,6 +14,14 @@
 	macro(ltr); \
 	macro(therm) \
 
+#define all_sensors(macro) \
+	macro(adc); \
+	macro(bme); \
+	macro(gps); \
+	macro(imu); \
+	macro(ltr); \
+	macro(therm) \
+
 #define sensor_init_(sensor) err |= sensor ## _init()
 /**
 * Initializes all of the sensors available; returns success.
