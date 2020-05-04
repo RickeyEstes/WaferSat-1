@@ -147,7 +147,8 @@ CSRC = $(STARTUPSRC) \
        src/sensors/common.c \
        src/radio/si.c \
        src/sd.c \
-       src/sensors/gps.c
+       src/sensors/gps.c \
+       src/usbcfg.c
 # Include paths that ChibiStudio does in the background
 CHIBISTUDIO = ./tools/gnu_arm_tools/7.2-2017q4/arm-none-eabi/include/ ./tools/gnu_arm_tools/7.2-2017q4/arm-none-eabi/include/sys
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global

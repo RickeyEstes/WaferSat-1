@@ -32,6 +32,18 @@
 #include "sensors/ltr.h"
 #include "radio/si.h"
 
+/** 
+ * USB Testing 
+**/
+//#if HAL_USE_SERIAL_USB
+#include "usbcfg.h"
+//	SerialUSBDriver SDU2;
+#define USBD_DATA_REQUEST_EP 1
+#define USBD_DATA_AVAILABLE_EP 2
+#define USBD_INTERRUPT_REQUEST_EP 3
+//#endif /* HAL_USE_SERIAL_USB */
+
+
 int main(void) {
 	halInit();
 	chSysInit();
@@ -51,37 +63,17 @@ int main(void) {
 	//log_info("Initialized with err %u.", error);
 	log_info("Initialized with err .");
 
-	wdg_init();
+	sduObjectInit(&SDU2);
+	sduStart(&SDU2, &serusbcfg);
+	usbDisconnectBus(serusbcfg.usbp);
+	chThdSleepMilliseconds(1000);
+	usbStart(serusbcfg.usbp, &usbcfg);
+	usbConnectBus(serusbcfg.usbp);
 
-	uint32_t count = 0;
 	 
 	while (true) {
 
-		if(true) {
-			uint8_t err = 0;
-			err += log_data();
-			struct ltr_t light = ltr_get();
-			if(light.ch0 > 50 || light.ch1 > 50 || (count % 3600) == 0) {
-				err += log_image();
-			}
-			count = 0;
-			wdg_reset();
-			if(err) {
-				LED_ERR();
-			}
-			else {
-				LED_OK();
-			}
-		}
-		else {
-			LED_INFO();
-		}
-
-		count++;
-
-		// chThdSleepMilliseconds(500);
-		LED_CLEAR();
-		// chThdSleepMilliseconds(500);
-		wdg_reset();
+		chThdSleepMilliseconds(1000);
+		chprintf((BaseSequentialStream*) &SDU2, "hello world!");
 	}
 }
